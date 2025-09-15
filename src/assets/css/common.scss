@@ -1,0 +1,88 @@
+.el-button--primary {
+    background-color: #5A8DEE;
+    &:hover {
+        background-color: lighten(#5A8DEE, 10%);
+    }
+    &:active, &:focus {
+        background-color: darken(#5A8DEE, 10%);
+    }
+}
+.el-button--info {
+    background-color: #E2ECFF;
+    color: #5A8DEE;
+    border: none;
+    &:hover {
+        color: #5A8DEE;
+        background-color: lighten(#E2ECFF, 2%);
+    }
+    &:active, &:focus {
+        background-color: darken(#E2ECFF, 2%);
+        color: #5A8DEE;
+    }
+}
+.flex {
+    display: flex;
+    &.align-center {
+        align-items: center;
+    }
+    &.justify-center {
+        justify-content: center;
+    }
+    &.justify-between {
+        justify-content: space-between;
+    }
+}
+
+// Margin utility classes - 1px to 10px
+@for $i from 1 through 20 {
+    .margin#{$i} {
+        margin: #{$i}px;
+    }
+    .margin-t#{$i} {
+        margin-top: #{$i}px;
+    }
+    .margin-r#{$i} {
+        margin-right: #{$i}px;
+    }
+    .margin-b#{$i} {
+        margin-bottom: #{$i}px;
+    }
+    .margin-l#{$i} {
+        margin-left: #{$i}px;
+    }
+    .margin-x#{$i} {
+        margin-left: #{$i}px;
+        margin-right: #{$i}px;
+    }
+    .margin-y#{$i} {
+        margin-top: #{$i}px;
+        margin-bottom: #{$i}px;
+    }
+}
+
+// Padding utility classes - 1px to 10px
+@for $i from 1 through 20 {
+    .padding#{$i} {
+        padding: #{$i}px;
+    }
+    .padding-t#{$i} {
+        padding-top: #{$i}px;
+    }
+    .padding-r#{$i} {
+        padding-right: #{$i}px;
+    }
+    .padding-b#{$i} {
+        padding-bottom: #{$i}px;
+    }
+    .padding-l#{$i} {
+        padding-left: #{$i}px;
+    }
+    .padding-x#{$i} {
+        padding-left: #{$i}px;
+        padding-right: #{$i}px;
+    }
+    .padding-y#{$i} {
+        padding-top: #{$i}px;
+        padding-bottom: #{$i}px;
+    }
+}

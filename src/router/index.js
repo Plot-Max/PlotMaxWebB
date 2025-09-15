@@ -1,22 +1,88 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '',
     name: 'home',
-    component: HomeView
+    redirect: '/',
+    component: () => import('../views/Home.vue'),
+    children: [
+      {
+        path: '/',
+        name: 'Index',
+        component: () => import('../views/index/index.vue'),
+      },
+      {
+        path: '/account',
+        name: 'Account',
+        component: () => import('../views/account/index.vue'),
+      },
+      {
+        path: '/point-not-enough',
+        name: 'PointNotEnough',
+        component: () => import('../views/result/pointNotEnough.vue'),
+      },
+      {
+        path: '/report',
+        name: 'Report',
+        component: () => import('../views/report/index.vue'),
+      },
+      {
+        path: '/search',
+        name: 'Search',
+        component: () => import('../views/search/index.vue'),
+      },
+      {
+        path: '/search/result',
+        name: 'SearchResult',
+        component: () => import('../views/search/result.vue'),
+      },
+      {
+        path: '/subscribe',
+        name: 'Subscribe',
+        component: () => import('../views/subscribe/index.vue'),
+      },
+      {
+        path: '/wallet',
+        name: 'Wallet',
+        component: () => import('../views/wallet/index.vue'),
+      },
+      {
+        path: '/pay-success',
+        name: 'PaySuccess',
+        component: () => import('../views/result/paySuccess.vue'),
+      },
+      {
+        path: '/pay-pack-success',
+        name: 'PaySuccess',
+        component: () => import('../views/result/payPackSuccess.vue'),
+      },
+      {
+        path: '/subscribe-success',
+        name: 'SubscribeSuccess',
+        component: () => import('../views/result/subscribeSuccess.vue'),
+      },
+      {
+        path: '/choose-service',
+        name: 'ChooseService',
+        component: () => import('../views/chooseService/index.vue'),
+      }
+    ]
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    meta: { noAuth: true },
+    hidden: true
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    meta: { noAuth: true },
+    hidden: true
   }
 ]
 
