@@ -22,12 +22,12 @@
                         <p>2 report points = 1 premium report</p>
                         <p>Paying for one year's fees at once will receive a discount of two months' worth of fees</p>
                     </div>
-                    <div class="package-pricing">
+                    <div class="package-pricing"> 
                         <div class="pricing-option active" @click="toBuy(1, 0)">
                             <span class="pricing-label">MONTH</span>
                             <span class="pricing-value">$ 4,000</span>
                         </div>
-                        <div class="pricing-option" @click="toBuy(1, 1)">
+                        <div class="pricing-option" @click="toBuy(8, 0)">
                             <span class="pricing-label">YEAR</span>
                             <span class="pricing-value">$ 40,000</span>
                         </div>
@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import { mockBuyPlan, paySubscribe, payPack } from '@/apis';
+import { mockBuyPlan, paySubscribe, payPack, changeSubscribe } from '@/apis';
 import MapStateMixins from '../mixins/MapStateMixins';
 export default {
     name: 'Subscribe',
@@ -177,7 +177,15 @@ export default {
     data() {
         return {
             reportPointQuantity: 1,
-            resultQuantity: 1
+            resultQuantity: 1,
+            changeModel: false,
+            oldPlanType: null,
+        }
+    },
+    mounted() {
+        if(this.$route.query.changeModel && this.$route.query.planType) {
+            this.changeModel = true;
+            this.oldPlanType = this.$route.query.planType;
         }
     },
     methods: {
@@ -218,6 +226,10 @@ export default {
                 })
                 return;
             }
+            if(this.changeModel) {
+                this.toChangeSubscribe(templateId, planType);
+                return;
+            }
             const looding = this.$loading({
                 lock: true,
                 text: 'Processing...',
@@ -241,6 +253,32 @@ export default {
             // }).finally(_ => {
             //     looding.close();
             // })
+        },
+        toChangeSubscribe(templateId, planType) {
+            if(planType != this.oldPlanType) {
+                this.$alert('You can only change the package within the same billing cycle (monthly to monthly or yearly to yearly)', {
+                    type: 'warning'
+                })
+                return;
+            }
+            this.$confirm('Are you sure you want to change your subscription plan?', 'Confirm Change', {
+                type: 'warning'
+            }).then(() => {
+                const looding = this.$loading({
+                    lock: true,
+                    text: 'Processing...',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                changeSubscribe({
+                    templateId: templateId,
+                    planType: planType,
+                }).then(response => {
+                    this.$router.replace('/wallet')
+                }).finally(_ => {
+                    looding.close();
+                })
+            })
         },
         doPayPack(reportPoint, searchPoint) {
             if(this.userInfo.user_role != 0) {

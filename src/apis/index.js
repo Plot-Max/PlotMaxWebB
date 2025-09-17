@@ -241,6 +241,18 @@ export function unsubscribe() {
     })
 }
 /**
+ * 修改计划
+ * {"templateId":7,"planType": 0}
+ * @returns 
+ */
+export function changeSubscribe(data) {
+    return request({
+        url: `/pay/Stripe/change/subscribe`,
+        method: 'post',
+        data
+    })
+}
+/**
  * 购买额外点数
  * {"reportPoint":1,"searchPoint":1, "successUrl":"http://xxxx", "cancelUrl":"http://xxxx"}
  * @param {} data 

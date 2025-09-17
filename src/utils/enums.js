@@ -28,5 +28,11 @@ export const subscribes = [
         name: 'Report SVlP',
         monthPrice: 10000,
         yearPrice: 100000
+    },
+    {
+        id: 8,
+        name: 'Test Change Plan',
+        monthPrice: 1,
+        yearPrice: 1
     }
 ]

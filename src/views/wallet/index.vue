@@ -7,17 +7,20 @@
                 <h3 class="card-title">Current subscription</h3>
                 <div class="subscription-content">
                     <div class="subscription-info">
-                        <div class="plan-name" v-html="getPlanName(subscriptionInfo.plan) || '-'"></div>
+                        <div class="plan-name" v-html="subscriptionInfo.template?.name || '-'"></div>
                         <div class="plan-price">{{ getPlanPrice(subscriptionInfo.plan) }}</div>
                         <div class="plan-details">{{subscriptionInfo.template?.report_point || 0}} reports & {{ (subscriptionInfo.template?.search_point || 0)}} results for a month</div>
                         <div class="plan-validity">Valid to {{formatDate2(subscriptionInfo.plan?.end_day)}}</div>
                     </div>
                     <div class="actions">
-                        <button class="change-plan-btn" @click="$router.push('/subscribe')">Change subscription plan</button>
+                        <button class="change-plan-btn" @click="toChangeSubscribe">Change subscription plan</button>
                         <el-button type="text" @click="doUnsubscription">Unsubscription</el-button>
                     </div>
+                    <div class="tip" v-if="subscriptionInfo.nextTemplate">
+                        The revised package “{{ subscriptionInfo.nextTemplate.name }}” will take effect on and be charged on the next payment date  {{formatDate3(subscriptionInfo.lastPlan?.end_day)}}
+                    </div>
                     <div class="tip" v-if="subscriptionInfo.plan && subscriptionInfo.canceled">
-                        Unsubscribe will take effect on the next payment date {{formatDate(subscriptionInfo.plan?.end_day)}}
+                        Unsubscribe will take effect on the next payment date {{formatDate3(subscriptionInfo.lastPlan?.end_day)}}
                     </div>
                 </div>
             </div>
@@ -243,6 +246,10 @@ export default {
             if(!date) return '-';
             return this.$dayjs(date).format('MMM, DD, YYYY');
         },
+        formatDate3(date) {
+            if(!date) return '-';
+            return this.$dayjs(date).format('MMM/DD/YYYY');
+        },
         doUnsubscription() {
             if(this.userInfo.user_role != 0) {
                 this.$alert('Only brokers can edit packages and payments', {
@@ -315,6 +322,15 @@ export default {
             } else {
                 return '-';
             }
+        },
+        toChangeSubscribe() {
+            if(this.subscriptionInfo.plan) {
+                this.$router.push({path: '/subscribe', query: { changeModel: true, planType: this.subscriptionInfo.plan.plan_type }});
+            }
+            else {
+                this.$router.push('/subscribe');
+            }
+            
         }
     }
 }
