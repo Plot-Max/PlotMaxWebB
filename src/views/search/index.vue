@@ -11,15 +11,16 @@
                             class="filter-tag">
                             {{ tag }}
                         </el-tag>
-                        <el-input
+                        <el-autocomplete
                             v-if="inputVisible"
                             v-model="inputValue"
                             ref="saveTagInput"
                             class="input-new-tag"
                             @keyup.enter.native="handleInputConfirm"
-                            @blur="handleInputConfirm"
-                            placeholder="输入城市/镇名称"
-                        ></el-input>
+                            @select="handleSelect"
+                            :fetch-suggestions="querySearchAsync"
+                            placeholder="City/Town"
+                        ></el-autocomplete>
                         <i class="el-icon-plus add-tag-btn" @click="showInput" v-if="!disableSearch"></i>
                     </div>
                 </div>
@@ -29,7 +30,7 @@
                     <h3 class="section-title">Lot Size</h3>
                     <div class="range-inputs">
                         <el-select v-model="filters.lot_size_min" filterable clearable placeholder="No Min" :disabled="disableSearch">
-                            <el-option label="No Min" :value="null"></el-option>
+                            <el-option label="No Min" :value="2"></el-option>
                             <el-option
                                 v-for="item in lotSizeMinOptions.filter(item => !filters.lot_size_max || item.value < filters.lot_size_max)"
                                 :key="item.value" :label="item.label" :value="item.value">
@@ -131,6 +132,25 @@
                 </div>
 
 
+                <!-- built utilization  -->
+                <div class="filter-section">
+                    <h3 class="section-title">Built Utilization</h3>
+                    <div style="width: 100%;">
+                        <el-slider
+                            v-model="filters.built_utilization_max"
+                            :format-tooltip="(value) => `${value}%`"
+                            :disabled="disableSearch"
+                            :marks="{
+                                50: '50%',
+                                75: '75%',
+                            }">
+                        </el-slider>
+                    </div>
+                </div>
+                 <!-- Underbuilt -->
+                <div class="filter-section">
+                    <h3 class="section-title" style="display: flex;align-items: center;gap: 10px;margin-top: 40px;"><el-checkbox v-model="filters.no_envi_setback" :disabled="disableSearch"></el-checkbox>No Environmental Setback Zone</h3>
+                </div>
                 <!-- History Commission -->
                 <div class="filter-section">
                     <h3 class="section-title">History Commission</h3>
@@ -139,6 +159,7 @@
                         <el-checkbox v-model="filters.notPartOfHistoric" :disabled="disableSearch">Not Part Of Historic District</el-checkbox>
                     </div>
                 </div>
+               
 
                 <!-- Action Buttons -->
                 <div class="filter-actions">
@@ -151,9 +172,49 @@
             <div class="results-panel">
                 <!-- 结果头部 -->
                 <div class="results-header">
+                    <!-- 面包屑显示已选条件 -->
+                    <el-breadcrumb separator-class="el-icon-arrow-right" class="results-breadcrumb">
+                        <el-breadcrumb-item v-for="tag in selectedTags" :key="tag">
+                            {{ tag }}
+                        </el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.lot_size_min || filters.lot_size_max">
+                            Lot Size:
+                            <span v-if="filters.lot_size_min">Min {{ formatterAcre(filters.lot_size_min) }}</span>
+                            <span v-if="filters.lot_size_min && filters.lot_size_max"> - </span>
+                            <span v-if="filters.lot_size_max">Max {{ formatterAcre(filters.lot_size_max) }}</span>
+                        </el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.frontage_min || filters.frontage_max">
+                            Frontage:
+                            <span v-if="filters.frontage_min">Min {{ filters.frontage_min }}</span>
+                            <span v-if="filters.frontage_min && filters.frontage_max"> - </span>
+                            <span v-if="filters.frontage_max">Max {{ filters.frontage_max }}</span>
+                        </el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.buildableSize_min || filters.buildableSize_max">
+                            Buildable Size:
+                            <span v-if="filters.buildableSize_min">Min {{ filters.buildableSize_min }}</span>
+                            <span v-if="filters.buildableSize_min && filters.buildableSize_max"> - </span>
+                            <span v-if="filters.buildableSize_max">Max {{ filters.buildableSize_max }}</span>
+                        </el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.gfa_min || filters.gfa_max">
+                            GFA:
+                            <span v-if="filters.gfa_min">Min {{ filters.gfa_min }}</span>
+                            <span v-if="filters.gfa_min && filters.gfa_max"> - </span>
+                            <span v-if="filters.gfa_max">Max {{ filters.gfa_max }}</span>
+                        </el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.footprint_min || filters.footprint_max">
+                            Footprint:
+                            <span v-if="filters.footprint_min">Min {{ filters.footprint_min }}</span>
+                            <span v-if="filters.footprint_min && filters.footprint_max"> - </span>
+                            <span v-if="filters.footprint_max">Max {{ filters.footprint_max }}</span>
+                        </el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.notHistoric">Not Historic Building</el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.built_utilization_max">Built Utilization:{{ filters.built_utilization_max }}%</el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.no_envi_setback">No Environmental Setback Zone</el-breadcrumb-item>
+                        <el-breadcrumb-item v-if="filters.notPartOfHistoric">Not Part Of Historic District</el-breadcrumb-item>
+                    </el-breadcrumb>
                     <div class="results-info">
                         <h2 class="results-count">{{ totalResults.toLocaleString() }} Results</h2>
-                        <el-button v-if="!disableSearch" type="primary" size="small" class="recharge-btn" @click="doBuySearch">Recharge and unlock</el-button>
+                        <el-button v-if="!disableSearch" type="primary" size="small" class="recharge-btn" @click="doBuySearch">{{ formatButtonText }}</el-button>
                     </div>
                 </div>
 
@@ -170,38 +231,40 @@
                                 </div>
                             </template>
                         </el-table-column>
+                        <el-table-column prop="show_city" label="TOWN" min-width="90"></el-table-column>
 
                         <!-- 临街面宽列 -->
                         <el-table-column prop="frontage" label="FRONTAGE" width="100" align="center">
                             <template slot-scope="scope">
-                                <span>{{ (scope.row.frontage_ft || 0).toFixed(2) }} ft</span>
+                                <span>{{ formatterPrice((scope.row.frontage_ft || 0).toFixed(0)) }} ft</span>
                             </template>
                         </el-table-column>
 
                         <!-- 地块大小列 -->
                         <el-table-column prop="lotSize" label="LOT SIZE" width="120" align="center">
                             <template slot-scope="scope">
-                                <span>{{ formatterArea(scope.row.lot_size_in_use_sqft) }}</span>
+                                <span>{{ formatterAcre(scope.row.lot_size_in_use_sqft) }}</span>
                             </template>
                         </el-table-column>
 
                         <!-- 可建设面积列 -->
                         <el-table-column prop="buildableSize" label="BUILDABLE SIZE" width="150" align="center">
                             <template slot-scope="scope">
-                                <span>{{ (scope.row.buildable_zone_sqft || 0).toFixed(2) }} sqft</span>
+                                <span>{{ formatterArea((scope.row.buildable_zone_sqft || 0).toFixed(0)) }}</span>
                             </template>
                         </el-table-column>
 
                         <el-table-column prop="footprint_max_sqft" label="Foot Print SIZE" width="150" align="center">
                             <template slot-scope="scope">
-                                <span>{{ (scope.row.footprint_max_sqft || 0).toFixed(2) }} sqft</span>
+                                <span>{{ formatterArea((scope.row.footprint_max_sqft || 0).toFixed(0)) }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="gfa_sqft" label="Maximum Gross Floor Area" width="140" align="center">
                             <template slot-scope="scope">
-                                <span>{{ (scope.row.gfa_sqft || 0).toFixed(2) }} sqft</span>
+                                <span>{{ formatterArea((scope.row.gfa_sqft || 0).toFixed(0)) }}</span>
                             </template>
                         </el-table-column>
+                        <el-table-column prop="historical" label="HISTORICAL" width="105" align="center"></el-table-column>
 
                         <!-- 用户列 -->
                         <!-- <el-table-column prop="user" label="USER" width="150" align="center">
@@ -211,7 +274,7 @@
                         </el-table-column> -->
 
                         <!-- 操作列 -->
-                        <el-table-column label="OPERATE" min-width="120" align="center">
+                        <el-table-column label="DETAIL REPORT" min-width="75" align="center">
                             <template slot-scope="scope">
                                 <el-button v-if="scope.row.show_address" type="text" size="small"
                                     @click="purchaseProperty(scope.row)" class="purchase-btn">
@@ -240,7 +303,7 @@
 </template>
 
 <script>
-import { searchComplex, buySearch } from '@/apis';
+import { searchComplex, buySearch, searchCity } from '@/apis';
 export default {
     name: 'SearchPage',
     components: {
@@ -248,6 +311,14 @@ export default {
     watch: {
         $route() {
             this.init()
+        }
+    },
+    computed: {
+        formatButtonText() {
+            console.log('aasdfasdfasdfadsf')
+            const length = this.formatterPrice(this.totalResults || 0)
+            const halfLength = this.formatterPrice(((this.totalResults || 0) / 2).toFixed(2), 2, 2)
+            return (this.totalResults && this.totalResults > 0) ? `${length} Result Points or $ ${halfLength} for Recharge and unlock Address` : 'Recharge and unlock'
         }
     },
     data() {
@@ -264,7 +335,7 @@ export default {
 
             // 筛选条件
             filters: {
-                lot_size_min: null,
+                lot_size_min: 2,
                 lot_size_max: null,
                 frontage_min: null,
                 frontage_max: null,
@@ -278,12 +349,12 @@ export default {
                 notPartOfHistoric: true
             },
             lotSizeMinOptions: [
-                { label: '1,000 sqft', value: 1000 },
-                { label: '2,000 sqft', value: 2000 },
-                { label: '3,000 sqft', value: 3000 },
-                { label: '4,000 sqft', value: 4000 },
-                { label: '5,000 sqft', value: 5000 },
-                { label: '7,000 sqft', value: 7000 },
+                // { label: '1,000 sqft', value: 1000 },
+                // { label: '2,000 sqft', value: 2000 },
+                // { label: '3,000 sqft', value: 3000 },
+                // { label: '4,000 sqft', value: 4000 },
+                // { label: '5,000 sqft', value: 5000 },
+                // { label: '7,000 sqft', value: 7000 },
                 { label: '0.25 acre(10,890 sqft)', value: 10890 },
                 { label: '0.5 acre', value: 21780 },
                 { label: '1 acre', value: 43560 },
@@ -397,15 +468,32 @@ export default {
             if (inputValue && !this.selectedTags.includes(inputValue)) {
                 this.selectedTags.push(inputValue)
             }
+
             this.inputVisible = false
             this.inputValue = ''
         },
-
+        handleSelect(item) {
+            console.log('selected item:', item, this.inputValue)
+            let inputValue = this.inputValue
+            if (inputValue && !this.selectedTags.includes(inputValue)) {
+                this.selectedTags.push(inputValue)
+            }
+            this.inputVisible = false
+            this.inputValue = ''
+        },
+        querySearchAsync(queryString, cb) {
+            searchCity(queryString).then(res => {
+                const results = res.data.map(city => {
+                    return { value: city + ', MA', origin: city }
+                })
+                cb(results)
+            })
+        },
         // 添加标签（保留原方法作为备份）
         addTag() {
-            this.$prompt('请输入城市/镇名称', '添加标签', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消'
+            this.$prompt('Please input city/town', 'Add Tag', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel'
             }).then(({ value }) => {
                 if (value && !this.selectedTags.includes(value)) {
                     this.selectedTags.push(value)
@@ -424,7 +512,7 @@ export default {
         // 重置筛选
         resetFilters() {
             this.filters = {
-                lot_size_min: null,
+                lot_size_min: 2,
                 lot_size_max: null,
                 frontage_min: null,
                 frontage_max: null,
@@ -448,8 +536,8 @@ export default {
             searchComplex({
                 page: this.currentPage - 1,
                 size: this.pageSize,
-                city: this.selectedTags?.length > 0 ? this.selectedTags.join(','): null,
-                lot_size_min: this.filters.lot_size_min || null,
+                city: this.selectedTags?.length > 0 ? this.selectedTags.map(item=>item.lastIndexOf(',') > 0 ? item.substring(0, item.lastIndexOf(',')).trim(): item).join(','): null,
+                lot_size_min: this.filters.lot_size_min || 2,
                 lot_size_max: this.filters.lot_size_max || null,
                 frontage_min: this.filters.frontage_min || null,
                 frontage_max: this.filters.frontage_max || null,
@@ -461,6 +549,8 @@ export default {
                 footprint_max: this.filters.footprint_max || null,
                 has_history: this.filters.notHistoric ? false : null,
                 in_history: this.filters.notPartOfHistoric ? false : null,
+                built_utilization_max: this.filters.built_utilization_max || null,
+                no_envi_setback: this.filters.no_envi_setback || null,
             }).then(res => {
                 this.loading = false
                 this.tableData = res.data.resultList
@@ -589,7 +679,7 @@ export default {
     }
 
     .input-new-tag {
-        width: 120px;
+        width: calc(100% - 50px);
         
         ::v-deep .el-input__inner {
             height: 28px;
@@ -809,7 +899,10 @@ export default {
         }
     }
 }
-
+.results-breadcrumb {
+    font-size: 13px;
+    margin-bottom: 7px;
+}
 /* 响应式调整 */
 @media (max-width: 1200px) {
     .search-content {

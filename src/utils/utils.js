@@ -1,10 +1,10 @@
 import Vue from "vue";
 
-Vue.prototype.formatterPrice = (number, precistion) => {
+Vue.prototype.formatterPrice = (number, precistion, minPrecision) => {
     const format = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
-        minimumFractionDigits: 0, // 最小小数位数
+        minimumFractionDigits: minPrecision || 0, // 最小小数位数
         maximumFractionDigits: precistion || 2,  // 最大小数位数
         currencyDisplay: 'code' // 使用货币符号，如 $
     })
@@ -16,11 +16,20 @@ Vue.prototype.formatterArea = (str) => {
     
     size = parseFloat(str)
     if(size <= 10890) {
-        return Math.round(size) + ' sqft'
+        return Vue.prototype.formatterPrice(Math.round(size)) + ' sqft'
     }
     else {
-        return (size/43560).toFixed(2) + ' acre'
+        return Vue.prototype.formatterPrice((size/43560).toFixed(2)) + ' acre'
     }
+}
+Vue.prototype.formatterAcre = (str) => {
+    if(!str) str == 0
+    let size = parseFloat(str)
+    
+    size = parseFloat(str)
+    
+    return Vue.prototype.formatterPrice((size/43560).toFixed(3)) + ' acre'
+    
 }
 
 const lotSizeMinOptions = [
@@ -180,6 +189,8 @@ Vue.prototype.formatSearchFormParams = function(params) {
         footprint_max: params.footprint_max > 4356000 ? null : parseFloat(params.footprint_max),
         notHistoric: params.has_history == null ? null : !params.has_history,
         notPartOfHistoric: params.in_history == null ? null : params.in_history === 'false' ? true : false,
+        built_utilization_max: params.built_utilization_max == 0 ? null : parseFloat(params.built_utilization_max),
+        no_envi_setback: params.no_envi_setback == 'true' ? true : null,
     }
 }
 

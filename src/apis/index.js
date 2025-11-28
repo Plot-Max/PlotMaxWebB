@@ -187,6 +187,12 @@ export function topReport(reportId, top) {
         method: 'get',
     })
 }
+export function searchCity(city) {
+    return request({
+        url: `/group/security/search/cities?keyword=${city}`,
+        method: 'get',
+    })
+}
 /**
  * 组的高级搜索订单列表
  */
