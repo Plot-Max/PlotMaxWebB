@@ -1,5 +1,13 @@
 import Vue from "vue";
 
+/**
+ * 格式化数字为美元货币价格字符串（不带"USD"标识）。
+ * 
+ * @param {number|string} number - 要格式化的数字。
+ * @param {number} [precistion=2] - 最大小数位数（maximumFractionDigits）。
+ * @param {number} [minPrecision=0] - 最小小数位数（minimumFractionDigits）。
+ * @returns {string} 格式化后的价格字符串。
+ */
 Vue.prototype.formatterPrice = (number, precistion, minPrecision) => {
     const format = new Intl.NumberFormat('en-US', {
         style: 'currency',
