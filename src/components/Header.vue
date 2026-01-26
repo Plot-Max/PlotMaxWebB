@@ -4,7 +4,7 @@
       <!-- Logo and Brand -->
       <div class="logo-section">
         <div class="logo" @click="$router.push('/')">
-          <img src="@/assets/logo/logo.png" alt="PLOT MAX Logo" class="logo-image" />
+          <img src="/plotmax-tob-logo.jpg" alt="PLOT MAX Logo" class="logo-image" />
         </div>
       </div>
 
@@ -43,12 +43,9 @@
         <div class="user-info">
           <el-dropdown placement="bottom-start">
             <div class="user-dropdown-trigger">
-              <el-avatar :size="40" background-color="#4a90e2" color="#fff" :src="userInfo?.logo">
-                {{ userInfo?.userEmail?.substring(0, 1).toUpperCase() || 'U' }}
-              </el-avatar>
               <div class="user-details">
-                <div class="user-name">{{ userInfo?.userEmail }}</div>
-                <div class="user-role">{{ userInfo?.user_role == 0 ? 'Broker' : 'Agent' }}</div>
+                <div class="welcome-text">Welcome back,</div>
+                <div class="user-email">{{ userInfo?.userEmail }}</div>
               </div>
             </div>
             <el-dropdown-menu slot="dropdown" class="user-dropdown-menu">
@@ -61,13 +58,22 @@
               <el-dropdown-item>
                 <el-button type="info" size="medium" @click="toAccountPage">Agent</el-button>
               </el-dropdown-item>
-              <el-dropdown-item>
-                <el-button type="info" size="medium" @click="logout">Log out</el-button>
-              </el-dropdown-item>
               
             </el-dropdown-menu>
 
           </el-dropdown>
+        </div>
+        <div class="logout-section">
+          <el-button type="text" class="logout-btn" @click="logout">
+            <div style="display: flex; align-items: center; justify-content: center;gap:10px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logout-icon">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" x2="9" y1="12" y2="12"></line>
+            </svg>
+            <span class="logout-text">Logout</span>
+            </div>
+          </el-button>
         </div>
       </div>
     </div>
@@ -242,36 +248,63 @@ export default {
     .user-info {
       display: flex;
       align-items: center;
-      gap: 12px;
 
       .user-dropdown-trigger {
         display: flex;
         align-items: center;
-        gap: 12px;
         cursor: pointer;
-        padding: 8px;
-        border-radius: 6px;
-        transition: background-color 0.3s;
+        padding: 0;
 
-        &:hover {
-          background-color: #f5f5f5;
-        }
         .user-details {
+          display: flex;
+          flex-direction: column;
           text-align: left;
 
-          .user-name {
-            font-weight: 600;
+          .welcome-text {
             font-size: 14px;
-            color: #333;
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: #999;
+            line-height: 1.4;
           }
 
-          .user-role {
-            font-size: 12px;
-            color: #666;
+          .user-email {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+            font-weight: 400;
           }
+        }
+      }
+    }
+
+    .logout-section {
+      display: flex;
+      align-items: center;
+
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #333;
+        font-size: 14px;
+        padding: 8px 12px;
+        margin: 0;
+        border-radius: 6px;
+        transition: background-color 0.3s, color 0.3s;
+
+        &:hover {
+          background-color: #E0E0E0;
+          color: #333;
+        }
+
+        .logout-icon {
+          width: 16px;
+          height: 16px;
+          color: currentColor;
+        }
+
+        .logout-text {
+          font-size: 14px;
+          font-weight: 500;
         }
       }
     }

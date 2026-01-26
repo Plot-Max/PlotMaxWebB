@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="layout-default">
     <Header />
     <div class="content">
       <router-view/>
@@ -11,7 +11,7 @@
 import Header from '@/components/Header.vue'
 
 export default {
-  name: 'HomeView',
+  name: 'DefaultLayout',
   components: {
     Header,
   }
@@ -19,7 +19,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.home {
+.layout-default {
   background: #f5f5f5;
   min-height: calc(100vh - 80px);
 }
