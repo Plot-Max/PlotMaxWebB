@@ -1,6 +1,6 @@
 <template>
   <div class="layout-default">
-    <Header />
+    <component :is="headerComponent" />
     <div class="content">
       <router-view/>
     </div>
@@ -9,12 +9,19 @@
 
 <script>
 import Header from '@/components/Header.vue'
+import HeaderV2 from '@/components/HeaderV2.vue'
 
 export default {
   name: 'DefaultLayout',
   components: {
     Header,
-  }
+    HeaderV2,
+  },
+  computed: {
+    headerComponent() {
+      return this.$route.path === '/search' ? 'HeaderV2' : 'Header'
+    },
+  },
 }
 </script>
 
@@ -29,7 +36,9 @@ export default {
   padding-top: 20px;
   box-sizing: border-box;
 }
+/* 搜索页统一间距 24px：与 search 页内两段垂直间距一致 */
 .content:has(.search-container) {
   max-width: 1800px;
+  padding-top: 24px;
 }
 </style>

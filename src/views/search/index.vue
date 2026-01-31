@@ -1,460 +1,916 @@
 <template>
   <div class="search-page">
-    <!-- 投资策略 + 区域叠加 栏（在 search-container 上方，与下方主容器样式统一） -->
-    <div class="strategy-overlay-bar-wrap">
-      <div class="strategy-overlay-bar">
-      <div class="strategy-section">
-        <h3 class="bar-section-title">INVESTMENT STRATEGY</h3>
-        <div class="strategy-tabs">
-          <button
-            v-for="item in investmentStrategyOptions"
-            :key="item.value"
-            type="button"
-            class="strategy-tab"
-            :class="{ active: investmentStrategy === item.value }"
-            @click="investmentStrategy = item.value"
-          >
-            {{ item.label }}
-          </button>
-        </div>
-      </div>
-      <div class="overlays-section">
-        <h3 class="bar-section-title">ZONE OVERLAYS</h3>
-        <div class="overlay-toggles">
-          <button
-            type="button"
-            class="overlay-btn"
-            :class="{ active: zoneOverlays.oppZones }"
-            @click="zoneOverlays.oppZones = !zoneOverlays.oppZones"
-          >
-            <span class="overlay-checkbox">
-              <i v-if="zoneOverlays.oppZones" class="el-icon-check"></i>
-            </span>
-            <span class="overlay-icon" aria-hidden="true">
-              <!-- 闪电图标 -->
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-              </svg>
-            </span>
-            <span class="overlay-label">Opp Zones</span>
-          </button>
-          <button
-            type="button"
-            class="overlay-btn"
-            :class="{ active: zoneOverlays.transitZones }"
-            @click="zoneOverlays.transitZones = !zoneOverlays.transitZones"
-          >
-            <span class="overlay-checkbox">
-              <i v-if="zoneOverlays.transitZones" class="el-icon-check"></i>
-            </span>
-            <span class="overlay-icon" aria-hidden="true">
-              <!-- 公交车图标 -->
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                <path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z"/>
-              </svg>
-            </span>
-            <span class="overlay-label">Transit Zones</span>
-          </button>
-        </div>
-      </div>
-      </div>
-    </div>
-
-    <div class="search-container">
-      <div class="search-content">
-      <!-- 左侧筛选面板 -->
-      <div class="filter-panel">
-        <h2 class="panel-title">Search Criteria</h2>
-
-        <!-- City/Town -->
-        <div class="filter-section">
-          <h3 class="section-title">City/Town</h3>
-          <div class="tag-input">
-            <el-tag
-              v-for="tag in selectedTags"
-              :key="tag"
-              :closable="!disableSearch"
-              @close="removeTag(tag)"
-              class="filter-tag"
-            >
-              {{ tag }}
-            </el-tag>
-            <el-autocomplete
-              v-model="inputValue"
-              ref="saveTagInput"
-              class="input-new-tag"
-              @keyup.enter.native="handleInputConfirm"
-              @select="handleSelect"
-              :fetch-suggestions="querySearchAsync"
-              placeholder="City/Town"
-              :disabled="disableSearch"
-            ></el-autocomplete>
-          </div>
-        </div>
-
-        <!-- Lot Size -->
-        <div class="filter-section">
-          <div class="section-header-row">
-            <h3 class="section-title">Lot Size</h3>
-            <div class="unit-selector">
+    <!-- 统一宽度容器：保证 ZONE OVERLAYS 与下方表格区域右侧对齐 -->
+    <div class="search-main-wrap">
+      <!-- 投资策略 + 区域叠加 栏（在 search-container 上方，与下方主容器样式统一） -->
+      <div class="strategy-overlay-bar-wrap">
+        <div class="strategy-overlay-bar">
+          <div class="strategy-section">
+            <h3 class="bar-section-title">INVESTMENT STRATEGY</h3>
+            <div class="strategy-tabs">
               <button
-                class="unit-btn"
-                :class="{ active: lotSizeUnit === 'sqft' }"
-                @click="lotSizeUnit = 'sqft'"
-                :disabled="disableSearch"
+                v-for="item in visibleStrategyOptions"
+                :key="item.value"
+                type="button"
+                class="strategy-tab"
+                :class="{ active: investmentStrategy === item.value }"
+                @click="investmentStrategy = item.value"
               >
-                sqft
-              </button>
-              <button
-                class="unit-btn"
-                :class="{ active: lotSizeUnit === 'acres' }"
-                @click="lotSizeUnit = 'acres'"
-                :disabled="disableSearch"
-              >
-                acres
+                {{ item.label }}
               </button>
             </div>
           </div>
-          <div class="range-inputs">
-            <el-input
-              v-model="lotSizeMin"
-              placeholder="Min"
-              :disabled="disableSearch"
-              class="range-input"
-            ></el-input>
-            <span class="range-separator">to</span>
-            <el-input
-              v-model="lotSizeMax"
-              placeholder="Max"
-              :disabled="disableSearch"
-              class="range-input"
-            ></el-input>
+          <div class="overlays-section">
+            <h3 class="bar-section-title">ZONE OVERLAYS</h3>
+            <div class="overlay-toggles">
+              <button
+                type="button"
+                class="overlay-btn"
+                :class="{ active: zoneOverlays.oppZones }"
+                @click="zoneOverlays.oppZones = !zoneOverlays.oppZones"
+              >
+                <span class="overlay-checkbox">
+                  <i v-if="zoneOverlays.oppZones" class="el-icon-check"></i>
+                </span>
+                <span class="overlay-icon" aria-hidden="true">
+                  <!-- 闪电图标 -->
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="currentColor"
+                  >
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                  </svg>
+                </span>
+                <span class="overlay-label">Opp Zones</span>
+              </button>
+              <button
+                type="button"
+                class="overlay-btn"
+                :class="{ active: zoneOverlays.transitZones }"
+                @click="zoneOverlays.transitZones = !zoneOverlays.transitZones"
+              >
+                <span class="overlay-checkbox">
+                  <i v-if="zoneOverlays.transitZones" class="el-icon-check"></i>
+                </span>
+                <span class="overlay-icon" aria-hidden="true">
+                  <!-- 公交车图标 -->
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z"
+                    />
+                  </svg>
+                </span>
+                <span class="overlay-label">Transit Zones</span>
+              </button>
+            </div>
           </div>
-        </div>
-
-        <!-- Built Utilization -->
-        <div class="filter-section">
-          <h3 class="section-title">Built Utilization</h3>
-          <div class="slider-container">
-            <el-slider
-              v-model="filters.built_utilization_max"
-              :format-tooltip="(value) => `${value}%`"
-              :disabled="disableSearch"
-              :marks="{
-                50: '50%',
-                75: '75%',
-              }"
-              class="utilization-slider"
-            ></el-slider>
-          </div>
-        </div>
-
-        <!-- Historic Building -->
-        <div class="filter-section">
-          <div class="checkbox-item">
-            <el-checkbox
-              v-model="filters.notHistoric"
-              :disabled="disableSearch"
-            >
-              Historic Building
-            </el-checkbox>
-          </div>
-        </div>
-
-        <!-- Action Button -->
-        <div class="filter-actions">
-          <el-button
-            type="primary"
-            @click="applyFilters"
-            class="apply-btn"
-            :disabled="disableSearch"
-          >
-            Apply Filters
-          </el-button>
         </div>
       </div>
 
-      <!-- 右侧结果区域 -->
-      <div class="results-panel">
-        <!-- 结果头部 -->
-        <div class="results-header">
-          <!-- 面包屑显示已选条件 -->
-          <el-breadcrumb
-            separator-class="el-icon-arrow-right"
-            class="results-breadcrumb"
-          >
-            <el-breadcrumb-item v-for="tag in selectedTags" :key="tag">
-              {{ tag }}
-            </el-breadcrumb-item>
-            <el-breadcrumb-item
-              v-if="filters.lot_size_min || filters.lot_size_max"
-            >
-              Lot Size:
-              <span v-if="filters.lot_size_min">
-                Min {{ formatterAcre(filters.lot_size_min) }}
-              </span>
-              <span v-if="filters.lot_size_min && filters.lot_size_max">-</span>
-              <span v-if="filters.lot_size_max">
-                Max {{ formatterAcre(filters.lot_size_max) }}
-              </span>
-            </el-breadcrumb-item>
-            <el-breadcrumb-item
-              v-if="filters.frontage_min || filters.frontage_max"
-            >
-              Frontage:
-              <span v-if="filters.frontage_min">
-                Min {{ filters.frontage_min }}
-              </span>
-              <span v-if="filters.frontage_min && filters.frontage_max">-</span>
-              <span v-if="filters.frontage_max">
-                Max {{ filters.frontage_max }}
-              </span>
-            </el-breadcrumb-item>
-            <el-breadcrumb-item
-              v-if="filters.buildableSize_min || filters.buildableSize_max"
-            >
-              Buildable Size:
-              <span v-if="filters.buildableSize_min">
-                Min {{ filters.buildableSize_min }}
-              </span>
-              <span
-                v-if="filters.buildableSize_min && filters.buildableSize_max"
+      <div class="search-container">
+        <div class="search-content">
+          <!-- 左侧筛选面板 -->
+          <div class="filter-panel">
+            <h2 class="panel-title">Search Criteria</h2>
+
+            <!-- City/Town -->
+            <div class="filter-section">
+              <h3 class="section-title">City/Town</h3>
+              <div class="tag-input">
+                <el-tag
+                  v-for="tag in selectedTags"
+                  :key="tag"
+                  :closable="!disableSearch"
+                  @close="removeTag(tag)"
+                  class="filter-tag"
+                >
+                  {{ tag }}
+                </el-tag>
+                <el-autocomplete
+                  v-model="inputValue"
+                  ref="saveTagInput"
+                  class="input-new-tag"
+                  @keyup.enter.native="handleInputConfirm"
+                  @select="handleSelect"
+                  :fetch-suggestions="querySearchAsync"
+                  placeholder="City/Town"
+                  :disabled="disableSearch"
+                ></el-autocomplete>
+              </div>
+            </div>
+
+            <!-- Lot Size -->
+            <div class="filter-section">
+              <h3 class="section-title">Lot Size</h3>
+              <div class="range-inputs">
+                <el-select
+                  v-model="filters.lot_size_min"
+                  filterable
+                  clearable
+                  placeholder="No Min"
+                  :disabled="disableSearch"
+                  class="range-input"
+                >
+                  <el-option label="No Min" :value="2"></el-option>
+                  <el-option
+                    v-for="item in lotSizeMinOptions.filter(
+                      (item) =>
+                        !filters.lot_size_max ||
+                        item.value < filters.lot_size_max
+                    )"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+                <span class="range-separator">to</span>
+                <el-select
+                  v-model="filters.lot_size_max"
+                  filterable
+                  clearable
+                  placeholder="No Max"
+                  :disabled="disableSearch"
+                  class="range-input"
+                >
+                  <el-option label="No Max" :value="null"></el-option>
+                  <el-option
+                    v-for="item in lotSizeMinOptions.filter(
+                      (item) =>
+                        !filters.lot_size_min ||
+                        item.value > filters.lot_size_min
+                    )"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </div>
+            </div>
+
+            <!-- Built Utilization -->
+            <div class="filter-section">
+              <h3 class="section-title">Built Utilization</h3>
+              <div class="slider-container">
+                <el-slider
+                  v-model="filters.built_utilization_max"
+                  :format-tooltip="(value) => `${value}%`"
+                  :disabled="disableSearch"
+                  :marks="{
+                    50: '50%',
+                    75: '75%',
+                  }"
+                  class="utilization-slider"
+                ></el-slider>
+              </div>
+            </div>
+
+            <!-- Gross Floor Area (sqft) -->
+            <div class="filter-section">
+              <h3 class="section-title">Gross Floor Area（sqft）</h3>
+              <div class="range-inputs">
+                <el-select
+                  v-model="filters.gfa_min"
+                  filterable
+                  clearable
+                  placeholder="No Min"
+                  :disabled="disableSearch"
+                  class="range-input"
+                >
+                  <el-option label="No Min" :value="null"></el-option>
+                  <el-option
+                    v-for="item in grossFloorAreaOptions.filter(
+                      (item) => !filters.gfa_max || item.value < filters.gfa_max
+                    )"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+                <span class="range-separator">to</span>
+                <el-select
+                  v-model="filters.gfa_max"
+                  filterable
+                  clearable
+                  placeholder="No Max"
+                  :disabled="disableSearch"
+                  class="range-input"
+                >
+                  <el-option label="No Max" :value="null"></el-option>
+                  <el-option
+                    v-for="item in grossFloorAreaOptions.filter(
+                      (item) => !filters.gfa_min || item.value > filters.gfa_min
+                    )"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </div>
+            </div>
+
+            <!-- History commission：Not Historic Building（传参与旧版一致：has_history 为 false 或 null） -->
+            <div class="filter-section">
+              <div class="checkbox-item">
+                <el-checkbox
+                  v-model="filters.notHistoric"
+                  :disabled="disableSearch"
+                >
+                  Not Historic Building
+                </el-checkbox>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="filter-actions">
+              <el-button
+                class="btn-base reset-btn"
+                @click="resetFilters"
+                :disabled="disableSearch"
               >
-                -
-              </span>
-              <span v-if="filters.buildableSize_max">
-                Max {{ filters.buildableSize_max }}
-              </span>
-            </el-breadcrumb-item>
-            <el-breadcrumb-item
-              v-if="filters.footprint_min || filters.footprint_max"
-            >
-              Footprint:
-              <span v-if="filters.footprint_min">
-                Min {{ filters.footprint_min }}
-              </span>
-              <span v-if="filters.footprint_min && filters.footprint_max">
-                -
-              </span>
-              <span v-if="filters.footprint_max">
-                Max {{ filters.footprint_max }}
-              </span>
-            </el-breadcrumb-item>
-            <el-breadcrumb-item v-if="filters.notHistoric">
-              Not Historic Building
-            </el-breadcrumb-item>
-            <el-breadcrumb-item v-if="filters.built_utilization_max">
-              Built Utilization:{{ filters.built_utilization_max }}%
-            </el-breadcrumb-item>
-            <el-breadcrumb-item v-if="filters.no_envi_setback">
-              No Environmental Setback Zone
-            </el-breadcrumb-item>
-            <el-breadcrumb-item v-if="filters.notPartOfHistoric">
-              Not Part Of Historic District
-            </el-breadcrumb-item>
-          </el-breadcrumb>
-          <div class="results-info">
-            <h2 class="results-count">
-              {{ totalResults.toLocaleString() }} Results
-            </h2>
-            <el-button
-              v-if="!disableSearch"
-              type="primary"
-              size="small"
-              class="recharge-btn"
-              @click="doBuySearch"
-            >
-              {{ formatButtonText }}
-            </el-button>
+                Reset
+              </el-button>
+              <el-button
+                type="primary"
+                class="btn-base apply-btn"
+                @click="applyFilters"
+                :disabled="disableSearch"
+              >
+                Apply Filters
+              </el-button>
+            </div>
           </div>
-        </div>
 
-        <!-- 结果表格 -->
-        <div class="results-table">
-          <el-table
-            :data="tableData"
-            style="width: 100%"
-            v-loading="loading"
-            class="search-table"
-            height="720px"
-          >
-            <!-- 地址列 -->
-            <el-table-column prop="address" label="ADDRESS" min-width="200">
-              <template slot-scope="scope">
-                <div class="address-cell">
-                  <i
-                    class="el-icon-lock address-icon"
-                    v-if="scope.row.locked"
-                  ></i>
-                  <span class="address-text" v-if="scope.row.show_address">
-                    {{ scope.row.show_address }}
-                  </span>
-                  <img v-else src="@/assets/icons/lock.png" width="16px" />
+          <div class="right-result-area">
+            <!-- 右侧结果区域 -->
+            <div class="results-panel">
+              <!-- 结果头部 -->
+              <div class="results-header">
+                <!-- 面包屑显示已选条件 -->
+                <el-breadcrumb
+                  separator-class="el-icon-arrow-right"
+                  class="results-breadcrumb"
+                >
+                  <el-breadcrumb-item v-for="tag in selectedTags" :key="tag">
+                    {{ tag }}
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item
+                    v-if="filters.lot_size_min || filters.lot_size_max"
+                  >
+                    Lot Size:
+                    <span v-if="filters.lot_size_min">
+                      Min {{ formatterAcre(filters.lot_size_min) }}
+                    </span>
+                    <span v-if="filters.lot_size_min && filters.lot_size_max">
+                      -
+                    </span>
+                    <span v-if="filters.lot_size_max">
+                      Max {{ formatterAcre(filters.lot_size_max) }}
+                    </span>
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item
+                    v-if="filters.frontage_min || filters.frontage_max"
+                  >
+                    Frontage:
+                    <span v-if="filters.frontage_min">
+                      Min {{ filters.frontage_min }}
+                    </span>
+                    <span v-if="filters.frontage_min && filters.frontage_max">
+                      -
+                    </span>
+                    <span v-if="filters.frontage_max">
+                      Max {{ filters.frontage_max }}
+                    </span>
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item
+                    v-if="
+                      filters.buildableSize_min || filters.buildableSize_max
+                    "
+                  >
+                    Buildable Size:
+                    <span v-if="filters.buildableSize_min">
+                      Min {{ filters.buildableSize_min }}
+                    </span>
+                    <span
+                      v-if="
+                        filters.buildableSize_min && filters.buildableSize_max
+                      "
+                    >
+                      -
+                    </span>
+                    <span v-if="filters.buildableSize_max">
+                      Max {{ filters.buildableSize_max }}
+                    </span>
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item v-if="filters.gfa_min || filters.gfa_max">
+                    GFA:
+                    <span v-if="filters.gfa_min">
+                      Min {{ filters.gfa_min }}
+                    </span>
+                    <span v-if="filters.gfa_min && filters.gfa_max">-</span>
+                    <span v-if="filters.gfa_max">
+                      Max {{ filters.gfa_max }}
+                    </span>
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item
+                    v-if="filters.footprint_min || filters.footprint_max"
+                  >
+                    Footprint:
+                    <span v-if="filters.footprint_min">
+                      Min {{ filters.footprint_min }}
+                    </span>
+                    <span v-if="filters.footprint_min && filters.footprint_max">
+                      -
+                    </span>
+                    <span v-if="filters.footprint_max">
+                      Max {{ filters.footprint_max }}
+                    </span>
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item v-if="filters.notHistoric">
+                    Not Historic Building
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item v-if="filters.built_utilization_max">
+                    Built Utilization:{{ filters.built_utilization_max }}%
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item v-if="filters.no_envi_setback">
+                    No Environmental Setback Zone
+                  </el-breadcrumb-item>
+                  <el-breadcrumb-item v-if="filters.notPartOfHistoric">
+                    Not Part Of Historic District
+                  </el-breadcrumb-item>
+                </el-breadcrumb>
+                <div class="results-info">
+                  <h2 class="results-count">
+                    {{ totalResults.toLocaleString() }} Results
+                  </h2>
+                  <el-button
+                    v-if="!disableSearch"
+                    type="primary"
+                    size="small"
+                    class="recharge-btn"
+                    @click="doBuySearch"
+                  >
+                    {{ formatButtonText }}
+                  </el-button>
                 </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="show_city"
-              label="TOWN"
-              min-width="90"
-            ></el-table-column>
+              </div>
 
-            <!-- 临街面宽列 -->
-            <el-table-column
-              prop="frontage"
-              label="FRONTAGE"
-              width="100"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <span>
-                  {{
-                    formatterPrice((scope.row.frontage_ft || 0).toFixed(0))
-                  }}
-                  ft
-                </span>
-              </template>
-            </el-table-column>
+              <!-- 结果表格 -->
+              <div class="results-table">
+                <el-table
+                  :data="tableData"
+                  style="width: 100%"
+                  v-loading="loading"
+                  class="search-table"
+                  height="720px"
+                >
+                  <!-- 地址列 -->
+                  <el-table-column
+                    prop="address"
+                    label="ADDRESS"
+                    min-width="200"
+                  >
+                    <template slot-scope="scope">
+                      <div class="address-cell">
+                        <i
+                          class="el-icon-lock address-icon"
+                          v-if="scope.row.locked"
+                        ></i>
+                        <span
+                          class="address-text"
+                          v-if="scope.row.show_address"
+                        >
+                          {{ scope.row.show_address }}
+                        </span>
+                        <img
+                          v-else
+                          src="@/assets/icons/lock.png"
+                          width="16px"
+                        />
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <!-- Property：Address + 家庭类型 -->
+                  <el-table-column
+                    prop="property"
+                    label="Property"
+                    min-width="220"
+                  >
+                    <template slot-scope="scope">
+                      <span>{{ formatProperty(scope.row) }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="show_city"
+                    label="TOWN"
+                    min-width="90"
+                  ></el-table-column>
 
-            <!-- 地块大小列 -->
-            <el-table-column
-              prop="lotSize"
-              label="LOT SIZE"
-              width="120"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <span>{{ formatterAcre(scope.row.lot_size_in_use_sqft) }}</span>
-              </template>
-            </el-table-column>
+                  <!-- 临街面宽列 -->
+                  <el-table-column
+                    prop="frontage"
+                    label="FRONTAGE"
+                    width="100"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <span>
+                        {{
+                          formatterPrice(
+                            (scope.row.frontage_ft || 0).toFixed(0)
+                          )
+                        }}
+                        ft
+                      </span>
+                    </template>
+                  </el-table-column>
 
-            <!-- 可建设面积列 -->
-            <el-table-column
-              prop="buildableSize"
-              label="BUILDABLE SIZE"
-              width="150"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <span>
-                  {{
-                    formatterArea(
-                      (scope.row.buildable_zone_sqft || 0).toFixed(0),
-                    )
-                  }}
-                </span>
-              </template>
-            </el-table-column>
+                  <!-- 地块大小列 -->
+                  <el-table-column
+                    prop="lotSize"
+                    label="LOT SIZE"
+                    width="120"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <span>
+                        {{ formatterAcre(scope.row.lot_size_in_use_sqft) }}
+                      </span>
+                    </template>
+                  </el-table-column>
 
-            <el-table-column
-              prop="footprint_max_sqft"
-              label="Foot Print SIZE"
-              width="150"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <span>
-                  {{
-                    formatterArea(
-                      (scope.row.footprint_max_sqft || 0).toFixed(0),
-                    )
-                  }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="gfa_sqft"
-              label="Maximum Gross Floor Area"
-              width="140"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <span>
-                  {{ formatterArea((scope.row.gfa_sqft || 0).toFixed(0)) }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="historical"
-              label="HISTORICAL"
-              width="105"
-              align="center"
-            ></el-table-column>
+                  <!-- Utilization：built_utilization 进度条 -->
+                  <el-table-column
+                    prop="built_utilization"
+                    label="Utilization"
+                    width="140"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <div class="utilization-cell">
+                        <div
+                          class="utilization-bar-wrap"
+                          :class="
+                            utilizationBarClass(scope.row.built_utilization)
+                          "
+                        >
+                          <div
+                            class="utilization-bar"
+                            :style="{
+                              width:
+                                Math.min(
+                                  Math.max(
+                                    Number(scope.row.built_utilization) || 0,
+                                    0
+                                  ),
+                                  100
+                                ) + '%',
+                            }"
+                          ></div>
+                        </div>
+                        <span class="utilization-text">
+                          {{
+                            (scope.row.built_utilization != null
+                              ? Number(scope.row.built_utilization)
+                              : 0
+                            ).toFixed(0)
+                          }}%
+                        </span>
+                      </div>
+                    </template>
+                  </el-table-column>
 
-            <!-- 用户列 -->
-            <!-- <el-table-column prop="user" label="USER" width="150" align="center">
+                  <!-- 可建设面积列 -->
+                  <el-table-column
+                    prop="buildableSize"
+                    label="BUILDABLE SIZE"
+                    width="150"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <span>
+                        {{
+                          formatterArea(
+                            (scope.row.buildable_zone_sqft || 0).toFixed(0)
+                          )
+                        }}
+                      </span>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column
+                    prop="footprint_max_sqft"
+                    label="Foot Print SIZE"
+                    width="150"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <span>
+                        {{
+                          formatterArea(
+                            (scope.row.footprint_max_sqft || 0).toFixed(0)
+                          )
+                        }}
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="gfa_sqft"
+                    label="Maximum Gross Floor Area"
+                    width="140"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <span>
+                        {{
+                          formatterArea((scope.row.gfa_sqft || 0).toFixed(0))
+                        }}
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <!-- Flags：土地性质图标（湿地、洪水、古建筑等） -->
+                  <el-table-column
+                    prop="flags"
+                    label="Flags"
+                    width="120"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <div class="flags-cell">
+                        <el-tooltip
+                          v-if="scope.row.has_wetland"
+                          content="Wetland"
+                          placement="top"
+                        >
+                          <span class="flag-icon flag-wetland" title="Wetland">
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                              fill="currentColor"
+                            >
+                              <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 4.17 3.5 7.5 7 11 3.5-3.5 7-6.83 7-11 0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                              />
+                            </svg>
+                          </span>
+                        </el-tooltip>
+                        <el-tooltip
+                          v-if="scope.row.flood"
+                          content="Flood"
+                          placement="top"
+                        >
+                          <span class="flag-icon flag-flood" title="Flood">
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                              fill="currentColor"
+                            >
+                              <path
+                                d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"
+                              />
+                            </svg>
+                          </span>
+                        </el-tooltip>
+                        <el-tooltip
+                          v-if="scope.row.has_history || scope.row.historical"
+                          content="Historic"
+                          placement="top"
+                        >
+                          <span
+                            class="flag-icon flag-historic"
+                            title="Historic"
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                              fill="currentColor"
+                            >
+                              <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm3.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+                              />
+                            </svg>
+                          </span>
+                        </el-tooltip>
+                        <span v-if="!hasAnyFlag(scope.row)" class="flags-empty">
+                          —
+                        </span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="historical"
+                    label="HISTORICAL"
+                    width="105"
+                    align="center"
+                  ></el-table-column>
+
+                  <!-- Zoning 列：key 含选项长度+选中数，确保表头（含气泡）在选中变化时重新渲染 -->
+                  <el-table-column
+                    :key="'zoning-' + (cityZoningSelectionList || []).length + '-' + (selectedZoningTypes || []).length"
+                    prop="zoning"
+                    label="Zoning Name"
+                    width="180"
+                    align="center"
+                  >
+                    <template slot="header">
+                      <span>Zoning Name</span>
+                      <span
+                        v-if="hasZoningSelectionList"
+                        class="column-filter-funnel-wrap"
+                        @click.stop="openZoningDialog"
+                      >
+                        <span class="column-filter-funnel">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <path
+                              d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"
+                            />
+                          </svg>
+                        </span>
+                        <span
+                          v-if="(selectedZoningTypes || []).length > 0"
+                          class="column-filter-funnel-badge"
+                        >
+                          {{ (selectedZoningTypes || []).length }}
+                        </span>
+                      </span>
+                    </template>
+                    <template slot-scope="scope">
+                      <span>{{ formatZoning(scope.row) }}</span>
+                    </template>
+                  </el-table-column>
+
+                  <!-- GFA (SQFT) 列 -->
+                  <el-table-column
+                    prop="gfa_sqft"
+                    label="GFA (SQFT)"
+                    width="120"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <span>
+                        {{
+                          formatterArea((scope.row.gfa_sqft || 0).toFixed(0))
+                        }}
+                      </span>
+                    </template>
+                  </el-table-column>
+
+                  <!-- 用户列 -->
+                  <!-- <el-table-column prop="user" label="USER" width="150" align="center">
                             <template slot-scope="scope">
                                 <span>{{ scope.row.user }}</span>
                             </template>
                         </el-table-column> -->
 
-            <!-- 操作列 -->
-            <el-table-column
-              label="DETAIL REPORT"
-              min-width="75"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <el-button
-                  v-if="scope.row.show_address"
-                  type="text"
-                  size="small"
-                  @click="purchaseProperty(scope.row)"
-                  class="purchase-btn"
-                >
-                  Purchase
-                </el-button>
-                <el-button
-                  v-if="scope.row.canDownload"
-                  type="primary"
-                  size="small"
-                  @click="downloadProperty(scope.row)"
-                  class="download-btn"
-                >
-                  Download
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+                  <!-- 操作列 -->
+                  <el-table-column
+                    label="Actions"
+                    min-width="120"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <el-button
+                        v-if="scope.row.show_address"
+                        size="small"
+                        @click="purchaseProperty(scope.row)"
+                        class="action-col-btn"
+                      >
+                        Purchase
+                      </el-button>
+                      <el-button
+                        v-if="scope.row.canDownload"
+                        size="small"
+                        @click="downloadProperty(scope.row)"
+                        class="action-col-btn"
+                      >
+                        Download
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </div>
 
-          <!-- 分页 -->
-          <div class="pagination-container">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 20, 50, 100]"
-              :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="totalResults"
-              class="search-pagination"
-            ></el-pagination>
+            <!-- 分页（独立于 results-panel 下方） -->
+            <div class="pagination-container">
+              <SearchPagination
+                :total="totalResults"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                @current-change="handleCurrentChange"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
-    </div>
+
+    <!-- Zoning Type 筛选弹窗：按地点分组，按钮式选择 -->
+    <el-dialog
+      :visible.sync="zoningDialogVisible"
+      width="680px"
+      class="zoning-dialog"
+      append-to-body
+      :show-close="true"
+    >
+      <div slot="title" class="zoning-dialog-title-wrap">
+        <div class="zoning-dialog-title">Filter by Zoning Type</div>
+        <div class="zoning-dialog-subtitle">
+          Select zoning types to filter properties
+        </div>
+      </div>
+      <div class="zoning-dialog-body">
+        <div
+          :key="group.locationLabel"
+          v-for="(group, gIndex) in zoningGroupsByLocation"
+          class="zoning-group"
+        >
+          <div v-if="gIndex > 0" class="zoning-group-divider"></div>
+          <div class="zoning-group-header">
+            <span class="zoning-group-pin" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+            </span>
+            <span class="zoning-group-location">
+              {{ group.locationLabel || "—" }}
+            </span>
+            <span class="zoning-group-selected">
+              {{ group.selectedCount }} selected
+            </span>
+          </div>
+          <div class="zoning-group-buttons">
+            <button
+              v-for="item in group.items"
+              :key="item.value"
+              type="button"
+              class="zoning-btn"
+              :class="{ 'zoning-btn--active': item.selected }"
+              @click="toggleZoning(item.value)"
+            >
+              {{ item.zoning }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="zoning-dialog-footer">
+        <button
+          type="button"
+          class="zoning-footer-clear"
+          @click="clearAllZoning"
+        >
+          Clear All ({{ (dialogSelectedZoningTypes || []).length }})
+        </button>
+        <div class="zoning-footer-actions">
+          <el-button
+            class="zoning-footer-reset"
+            @click="zoningDialogVisible = false"
+          >
+            Cancel
+          </el-button>
+          <el-button
+            type="primary"
+            class="zoning-footer-apply"
+            @click="confirmZoningFilter"
+          >
+            Apply Filters
+          </el-button>
+        </div>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { searchComplex, buySearch, searchCity } from "@/apis";
+import SearchPagination from "@/components/SearchPagination.vue";
+
 export default {
   name: "SearchPage",
-  components: {},
+  components: { SearchPagination },
   watch: {
     $route() {
       this.init();
     },
+    hasLeftFilters(val) {
+      if (!val && this.investmentStrategy !== "all_listings") {
+        this.investmentStrategy = "all_listings";
+      }
+    },
   },
   computed: {
+    // 是否有左侧筛选条件（有任一条件即视为“有筛选”）
+    hasLeftFilters() {
+      const f = this.filters;
+      return (
+        (this.selectedTags && this.selectedTags.length > 0) ||
+        (f.lot_size_min !== undefined && f.lot_size_min !== 2) ||
+        (f.lot_size_max != null && f.lot_size_max !== "") ||
+        (f.frontage_min != null && f.frontage_min !== "") ||
+        (f.frontage_max != null && f.frontage_max !== "") ||
+        (f.buildableSize_min != null && f.buildableSize_min !== "") ||
+        (f.buildableSize_max != null && f.buildableSize_max !== "") ||
+        (f.gfa_min != null && f.gfa_min !== "") ||
+        (f.gfa_max != null && f.gfa_max !== "") ||
+        (f.footprint_min != null && f.footprint_min !== "") ||
+        (f.footprint_max != null && f.footprint_max !== "") ||
+        f.notHistoric === true ||
+        f.notPartOfHistoric === false ||
+        (f.built_utilization_max != null && f.built_utilization_max !== "") ||
+        (f.no_envi_setback != null && f.no_envi_setback !== "")
+      );
+    },
+    // 根据是否有左侧筛选决定显示的 tab：无筛选只显示 All Listings，有筛选时显示 Lot Splits、Expansion Plays
+    visibleStrategyOptions() {
+      const all = this.investmentStrategyOptions;
+      const allListings = all.find((o) => o.value === "all_listings");
+      if (!this.hasLeftFilters) {
+        return allListings ? [allListings] : all.slice(0, 1);
+      }
+      return all.filter(
+        (o) =>
+          o.value === "all_listings" ||
+          o.value === "lot_splits" ||
+          o.value === "expansion_plays"
+      );
+    },
+    // 列表接口返回的 Zoning 选项，用于弹窗渲染（扁平列表，兼容旧逻辑）
+    zoningTypeOptions() {
+      const list = this.cityZoningSelectionList || [];
+      const seen = new Set();
+      return list
+        .filter((item) => {
+          const key = `${item.city}|${item.zoning}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .map((item) => ({
+          label: item.city ? `${item.city} - ${item.zoning}` : item.zoning,
+          value: `${item.city}|${item.zoning}`,
+        }));
+    },
+    // 按地点（city）分组的 Zoning 选项，用于弹窗按地点展示（选中状态用弹窗临时选中）
+    zoningGroupsByLocation() {
+      const list = this.cityZoningSelectionList || [];
+      const selected = new Set(this.dialogSelectedZoningTypes || []);
+      const byCity = new Map(); // city -> Set of value, 用于去重
+      list.forEach((item) => {
+        const city = item.city != null ? String(item.city).trim() : "";
+        const value = `${item.city}|${item.zoning}`;
+        if (!byCity.has(city)) byCity.set(city, new Map()); // city -> { value -> zoning } 去重
+        const slot = byCity.get(city);
+        if (!slot.has(value)) slot.set(value, item.zoning);
+      });
+      return Array.from(byCity.entries()).map(([locationLabel, slot]) => {
+        const items = Array.from(slot.entries()).map(([value, zoning]) => ({
+          value,
+          zoning,
+          selected: selected.has(value),
+        }));
+        const selectedCount = items.filter((i) => i.selected).length;
+        return { locationLabel, items, selectedCount };
+      });
+    },
+    // 有 Zoning 选项数据时才显示列头漏斗
+    hasZoningSelectionList() {
+      return (this.cityZoningSelectionList || []).length > 0;
+    },
     formatButtonText() {
       console.log("aasdfasdfasdfadsf");
       const length = this.formatterPrice(this.totalResults || 0);
       const halfLength = this.formatterPrice(
         ((this.totalResults || 0) / 2).toFixed(2),
         2,
-        2,
+        2
       );
       return this.totalResults && this.totalResults > 0
         ? `${length} Result Points or $ ${halfLength} for Recharge and unlock Address`
@@ -472,11 +928,6 @@ export default {
 
       disableSearch: false,
 
-      // UI 状态
-      lotSizeUnit: "sqft",
-      lotSizeMin: "",
-      lotSizeMax: "",
-
       // 筛选条件
       filters: {
         lot_size_min: 2,
@@ -485,6 +936,8 @@ export default {
         frontage_max: null,
         buildableSize_min: null,
         buildableSize_max: null,
+        gfa_min: null,
+        gfa_max: null,
         footprint_min: null,
         footprint_max: null,
         notHistoric: false,
@@ -589,12 +1042,45 @@ export default {
         oppZones: false,
         transitZones: false,
       },
+
+      // Zoning 列筛选（数据来自列表接口 cityZoningSelectionList）
+      zoningDialogVisible: false,
+      selectedZoningTypes: [], // 已生效的选中（表头气泡、接口），仅点击 Apply Filters 后更新
+      dialogSelectedZoningTypes: [], // 弹窗内临时选中，用于弹窗内展示与操作
+      cityZoningSelectionList: [], // { city, zoning, selection }[]
     };
   },
   mounted() {
     this.init();
   },
   methods: {
+    // Property 列：Address + 家庭类型（use_desc）
+    formatProperty(row) {
+      const addr = row.show_address || "";
+      const useDesc = row.use_desc || "";
+      if (!addr && !useDesc) return "—";
+      return [addr, useDesc].filter(Boolean).join(" ");
+    },
+    // Utilization 进度条颜色：<40% 绿，40–60% 黄，>60% 红
+    utilizationBarClass(val) {
+      const n = Number(val);
+      if (n < 40) return "utilization-green";
+      if (n <= 60) return "utilization-yellow";
+      return "utilization-red";
+    },
+    hasAnyFlag(row) {
+      return !!(
+        row.has_wetland ||
+        row.flood ||
+        row.has_history ||
+        row.historical
+      );
+    },
+    // Zoning 列：优先 policy_zoning，其次 gis_zoning
+    formatZoning(row) {
+      const v = row.policy_zoning || row.gis_zoning;
+      return v && String(v).trim() ? v : "—";
+    },
     init() {
       if (this.$route.query.mode == 1) {
         this.disableSearch = true;
@@ -653,30 +1139,32 @@ export default {
       }
     },
 
-    // 应用筛选
+    openZoningDialog() {
+      this.dialogSelectedZoningTypes = [...(this.selectedZoningTypes || [])];
+      this.zoningDialogVisible = true;
+    },
+    toggleZoning(value) {
+      const arr = this.dialogSelectedZoningTypes || [];
+      const idx = arr.indexOf(value);
+      if (idx >= 0) {
+        this.dialogSelectedZoningTypes = arr.filter((_, i) => i !== idx);
+      } else {
+        this.dialogSelectedZoningTypes = [...arr, value];
+      }
+    },
+    clearAllZoning() {
+      this.dialogSelectedZoningTypes = [];
+    },
+    confirmZoningFilter() {
+      this.selectedZoningTypes = [...(this.dialogSelectedZoningTypes || [])];
+      this.zoningDialogVisible = false;
+      if (this.selectedZoningTypes.length) {
+        this.searchProperties(false);
+      }
+    },
+
+    // 应用筛选（Lot Size 已通过 v-model 绑定 filters，无需转换）
     applyFilters() {
-      // 转换 Lot Size
-      if (this.lotSizeMin) {
-        const minValue =
-          this.lotSizeUnit === "acres"
-            ? parseFloat(this.lotSizeMin) * 43560
-            : parseFloat(this.lotSizeMin);
-        this.filters.lot_size_min = minValue || 2;
-      } else {
-        this.filters.lot_size_min = 2;
-      }
-
-      if (this.lotSizeMax) {
-        const maxValue =
-          this.lotSizeUnit === "acres"
-            ? parseFloat(this.lotSizeMax) * 43560
-            : parseFloat(this.lotSizeMax);
-        this.filters.lot_size_max = maxValue || null;
-      } else {
-        this.filters.lot_size_max = null;
-      }
-
-      // 执行搜索
       this.searchProperties(true);
     },
 
@@ -689,16 +1177,16 @@ export default {
         frontage_max: null,
         buildableSize_min: null,
         buildableSize_max: null,
+        gfa_min: null,
+        gfa_max: null,
         footprint_min: null,
         footprint_max: null,
         notHistoric: false,
         notPartOfHistoric: true,
         built_utilization_max: null,
+        no_envi_setback: null,
       };
       this.selectedTags = [];
-      this.lotSizeUnit = "sqft";
-      this.lotSizeMin = "";
-      this.lotSizeMax = "";
     },
 
     // 搜索房产
@@ -715,9 +1203,14 @@ export default {
                 .map((item) =>
                   item.lastIndexOf(",") > 0
                     ? item.substring(0, item.lastIndexOf(",")).trim()
-                    : item,
+                    : item
                 )
                 .join(",")
+            : null,
+        // Zoning 筛选：格式 city:zoning 多个用逗号分隔，如 AMESBURY:R8,AMESBURY:RC
+        city_zoning:
+          this.selectedZoningTypes?.length > 0
+            ? this.selectedZoningTypes.map((v) => v.replace("|", ":")).join(",")
             : null,
         lot_size_min: this.filters.lot_size_min || 2,
         lot_size_max: this.filters.lot_size_max || null,
@@ -725,18 +1218,28 @@ export default {
         frontage_max: this.filters.frontage_max || null,
         buildable_min: this.filters.buildableSize_min || null,
         buildable_max: this.filters.buildableSize_max || null,
+        gfa_min: this.filters.gfa_min || null,
+        gfa_max: this.filters.gfa_max || null,
         footprint_min: this.filters.footprint_min || null,
         footprint_max: this.filters.footprint_max || null,
         has_history: this.filters.notHistoric ? false : null,
         in_history: this.filters.notPartOfHistoric ? false : null,
         built_utilization_max: this.filters.built_utilization_max || null,
         no_envi_setback: this.filters.no_envi_setback || null,
+        lot_split: this.investmentStrategy === "lot_splits",
+        expansion_plays: this.investmentStrategy === "expansion_plays",
       })
         .then((res) => {
           this.loading = false;
-          this.tableData = res.data.resultList;
+          this.tableData = res.data.resultList || [];
           this.totalResults = res.data.total || 0;
           this.searchParams = res.data.searchParams;
+          const list = res.data.cityZoningSelectionList || [];
+          this.cityZoningSelectionList = list;
+          // 同步弹窗勾选状态：接口里 selection 为 true 的项
+          this.selectedZoningTypes = list
+            .filter((item) => item.selection === true)
+            .map((item) => `${item.city}|${item.zoning}`);
         })
         .catch(() => {
           this.loading = false;
@@ -756,7 +1259,7 @@ export default {
     doBuySearch() {
       if (this.tableData.length === 0) {
         this.$message.warning(
-          "No properties to unlock. Please perform a search first.",
+          "No properties to unlock. Please perform a search first."
         );
         return;
       }
@@ -769,7 +1272,7 @@ export default {
       buySearch(this.searchParams)
         .then((res) => {
           this.$message.success(
-            "Recharge successful! You can now unlock addresses.",
+            "Recharge successful! You can now unlock addresses."
           );
           this.searchProperties();
         })
@@ -781,12 +1284,6 @@ export default {
     // 下载房产信息
     downloadProperty(row) {
       this.$message.info(`下载房产信息 ${row.id}`);
-    },
-
-    // 分页大小改变
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.searchProperties();
     },
 
     // 当前页改变
@@ -803,25 +1300,29 @@ export default {
   flex: 1;
 }
 
+/* 宽度由 search-main-wrap 约束，左右不再单独设 padding，与上方栏对齐 */
 .search-content {
   display: flex;
-  gap: 20px;
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
+  gap: var(--search-gap);
+  padding: var(--search-gap) 0 20px 0;
+  width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     flex-direction: column;
-    padding: 10px;
+    padding: 8px 0 10px 0;
+    gap: var(--search-gap);
   }
 }
 
 /* 左侧筛选面板 */
 .filter-panel {
-  width: 300px;
+  width: 280px;
+  min-width: 280px;
+  flex-shrink: 0;
   background: white;
   border-radius: 8px;
-  padding: 24px;
+  padding: 20px;
   height: fit-content;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
@@ -1033,8 +1534,9 @@ export default {
 }
 
 .slider-container {
-  width: 100%;
+  width: calc(100% - 16px);
   padding: 8px 0;
+  margin: 0 auto;
 
   .utilization-slider {
     ::v-deep .el-slider__runway {
@@ -1077,18 +1579,46 @@ export default {
 
 .filter-actions {
   margin-top: 24px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  .btn-base {
+    padding: 12px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+
+  .reset-btn {
+    flex-shrink: 0;
+    background-color: transparent;
+    border-color: #e0e0e0;
+    color: #555;
+    font-weight: 500;
+    font-size: 14px;
+
+    &:hover {
+      background-color: transparent;
+      border-color: #d0d0d0;
+      color: #333;
+    }
+
+    &:disabled {
+      background-color: transparent;
+      border-color: #eee;
+      color: #bbb;
+    }
+  }
 
   .apply-btn {
-    width: 100%;
+    flex: 1;
+    margin-left: 0;
     background-color: #1a1a1a;
     border-color: #1a1a1a;
     color: white;
     font-weight: 600;
-    font-size: 16px;
-    padding: 12px 0;
-    border-radius: 4px;
+    font-size: 14px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
 
     &:hover {
       background-color: #2a2a2a;
@@ -1112,9 +1642,16 @@ export default {
   }
 }
 
+.right-result-area {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0; /* 防止表格 min-width 把整块撑宽，保证与上方 ZONE OVERLAYS 对齐 */
+}
+
 /* 右侧结果面板 */
 .results-panel {
-  flex: 1;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -1122,13 +1659,14 @@ export default {
 }
 
 .results-header {
+  display: none; /* 隐藏结果头部（面包屑、结果数等） */
   padding: 24px 24px 0;
 
   .results-info {
     display: flex;
     align-items: center;
     gap: 20px;
-    margin-bottom: 20px;
+    margin-bottom: var(--search-gap);
 
     @media (max-width: 768px) {
       flex-direction: column;
@@ -1148,10 +1686,6 @@ export default {
     background-color: #5a8dee;
     border-color: #5a8dee;
   }
-}
-
-.results-table {
-  padding: 0 24px 24px;
 }
 
 /* 表格样式 */
@@ -1192,72 +1726,308 @@ export default {
     color: #5a8dee;
     font-size: 14px;
   }
-
-  .address-text {
-    color: #606266;
-  }
 }
 
-.purchase-btn {
+/* Utilization 进度条：进度条与百分比同一行不换行 */
+.utilization-cell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.utilization-bar-wrap {
+  flex: 1;
+  min-width: 0;
+  max-width: 80px;
+  height: 8px;
+  background: #e4e7ed;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.utilization-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.2s ease;
+}
+.utilization-bar-wrap.utilization-green .utilization-bar {
+  background: #67c23a;
+}
+.utilization-bar-wrap.utilization-yellow .utilization-bar {
+  background: #e6a23c;
+}
+.utilization-bar-wrap.utilization-red .utilization-bar {
+  background: #f56c6c;
+}
+.utilization-text {
+  font-size: 12px;
+  color: #606266;
+}
+
+/* Flags 土地性质图标 */
+.flags-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.flag-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+.flag-wetland {
+  color: #409eff;
+}
+.flag-flood {
+  color: #409eff;
+}
+.flag-historic {
+  color: #e6a23c;
+}
+.flags-empty {
+  color: #c0c4cc;
+  font-size: 12px;
+}
+
+/* 表头漏斗图标（Zoning & ADU 列） */
+.search-table ::v-deep .column-filter-funnel-wrap {
+  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.search-table ::v-deep .column-filter-funnel {
+  display: inline-flex;
+  align-items: center;
+  color: #909399;
+}
+.search-table ::v-deep .column-filter-funnel-wrap:hover .column-filter-funnel {
   color: #5a8dee;
+}
+.search-table ::v-deep .column-filter-funnel-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #67c23a;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Zoning Type 弹窗：按地点分组 + 按钮式选择 */
+.zoning-dialog .el-dialog__header {
+  padding-bottom: 8px;
+}
+.zoning-dialog-title-wrap {
+  padding-right: 32px;
+}
+.zoning-dialog-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+}
+.zoning-dialog-subtitle {
+  font-size: 13px;
+  color: #909399;
+  margin-top: 4px;
+}
+.zoning-dialog-body {
+  padding: 8px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.zoning-group {
+  margin-bottom: 16px;
+}
+.zoning-group:last-child {
+  margin-bottom: 0;
+}
+.zoning-group-divider {
+  height: 1px;
+  background: #e8e8e8;
+  margin: 12px 0 14px;
+}
+.zoning-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.zoning-group-pin {
+  color: #c53030;
+  display: inline-flex;
+  align-items: center;
+}
+.zoning-group-location {
+  font-size: 14px;
+  font-weight: 500;
+  color: #303133;
+}
+.zoning-group-selected {
+  margin-left: auto;
+  font-size: 12px;
+  color: #909399;
+}
+.zoning-group-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.zoning-btn {
+  padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 6px;
+    /* border: 1px solid #67c23a; */
+    color: #606266;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    border-color: #333;
+    outline: none;
+    border: none;
+    border: 2px solid #efefef;
+    color: #000;
+    padding: 12px 25px;
+}
+.zoning-btn:hover {
+  border-color: #85ce61;
+  color: #67c23a;
+}
+.zoning-btn--active {
+  background: #e1f3d8;
+  border-color: #67c23a;
+  color: #67c23a;
+}
+.zoning-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.zoning-footer-clear {
+  font-size: 13px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.zoning-footer-clear:hover {
+  text-decoration: underline;
+}
+.zoning-footer-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+/* 右下角按钮样式与左侧 Reset / Apply Filters 一致 */
+.zoning-dialog ::v-deep .zoning-footer-reset {
+  padding: 12px 16px;
+  border-radius: 4px;
+  background-color: transparent !important;
+  border-color: #e0e0e0 !important;
+  color: #555 !important;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+.zoning-dialog ::v-deep .zoning-footer-reset:hover {
+  background-color: transparent !important;
+  border-color: #d0d0d0 !important;
+  color: #333 !important;
+}
+.zoning-dialog ::v-deep .zoning-footer-apply {
+  padding: 12px 16px;
+  border-radius: 4px;
+  background-color: #1a1a1a !important;
+  border-color: #1a1a1a !important;
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+.zoning-dialog ::v-deep .zoning-footer-apply:hover {
+  background-color: #2a2a2a !important;
+  border-color: #2a2a2a !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+.zoning-dialog ::v-deep .zoning-footer-apply:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.search-table .address-text {
+  color: #606266;
+}
+
+/* 操作列按钮：参考 apply filter，更小尺寸 + 默认透明，悬停显示背景 */
+.action-col-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid #1a1a1a;
+  color: #1a1a1a;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  box-shadow: none;
 
   &:hover {
-    color: #4a7bc8;
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    background-color: #2a2a2a;
+    border-color: #2a2a2a;
   }
 }
 
-.download-btn {
-  background-color: #5a8dee;
-  border-color: #5a8dee;
-  font-size: 12px;
-  padding: 6px 16px;
-}
-
-/* 分页样式 */
+/* 分页容器：包裹 SearchPagination 组件 */
 .pagination-container {
-  display: flex;
-  justify-content: center;
-  padding: 24px 0;
-}
-
-.search-pagination {
-  ::v-deep .el-pagination {
-    .el-pager li.active {
-      background-color: #5a8dee;
-      color: white;
-    }
-
-    .el-pagination__jump {
-      margin-left: 24px;
-    }
-
-    .btn-next,
-    .btn-prev {
-      background-color: #f4f4f5;
-      color: #606266;
-
-      &:hover {
-        color: #5a8dee;
-      }
-    }
-  }
+  padding: 16px 0;
+  margin-top: 16px;
+  border-radius: 6px;
 }
 .results-breadcrumb {
   font-size: 13px;
-  margin-bottom: 7px;
+  margin-bottom: var(--search-gap);
 }
 
-/* 投资策略 + 区域叠加 栏（与 filter-panel、results-panel 样式统一） */
+/* 统一间距变量，与 layout .content 的 padding-top 一致 */
 .search-page {
   min-height: 100vh;
   background-color: #f5f5f5;
+  --search-gap: 24px;
 }
 
-/* 与 search-content 同宽、同左右留白；顶部间距收窄（布局 .content 已有 padding-top 20px） */
-.strategy-overlay-bar-wrap {
-  margin: -8px auto 0;
-  padding: 12px 20px 0;
+/* 统一宽度容器：ZONE OVERLAYS 与下方表格区域共用此宽度，保证右侧对齐 */
+.search-main-wrap {
   max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部不留白，由 layout .content padding-top 提供；宽度由 search-main-wrap 约束 */
+.strategy-overlay-bar-wrap {
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -1267,7 +2037,7 @@ export default {
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
-  padding: 16px 24px;
+  padding: 16px 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -1380,17 +2150,19 @@ export default {
 /* 响应式调整 */
 @media (max-width: 1200px) {
   .search-content {
-    gap: 15px;
+    gap: var(--search-gap);
   }
 
   .filter-panel {
-    width: 280px;
+    width: 240px;
+    min-width: 200px;
   }
 }
 
 @media (max-width: 992px) {
   .filter-panel {
-    width: 260px;
+    width: 220px;
+    min-width: 200px;
   }
 
   .search-table {
@@ -1399,12 +2171,11 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .strategy-overlay-bar-wrap {
-    margin-top: -8px;
-    padding: 10px 10px 0;
+  .search-main-wrap {
+    padding: 0 10px 0;
   }
   .search-content {
-    padding: 15px 10px;
+    padding: var(--search-gap) 0 10px 0;
   }
   .filter-panel {
     width: 100%;
