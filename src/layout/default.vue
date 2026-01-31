@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     headerComponent() {
-      return this.$route.path === '/search' ? 'HeaderV2' : 'Header'
+      return this.$route.path === '/search/v2' ? 'HeaderV2' : 'Header'
     },
   },
 }

@@ -31,6 +31,14 @@ const routes = [
         component: () => import('../views/report/index.vue'),
       },
       {
+        path: '/search/v2',
+        name: 'SearchV2',
+        component: () => import('../views/search/index-v2.vue'),
+        meta: {
+          title: 'Zoning Search',
+        },
+      },
+      {
         path: '/search',
         name: 'Search',
         component: () => import('../views/search/index.vue'),

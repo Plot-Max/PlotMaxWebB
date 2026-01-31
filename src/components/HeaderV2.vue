@@ -13,43 +13,9 @@
         <span v-if="pageTitle" class="page-title">{{ pageTitle }}</span>
       </div>
 
-      <!-- Action Buttons：/search 下 Advanced Search 为主按钮，Purchase Report 为次要，绿色色系 -->
-      <!-- <div class="action-section">
-        <el-button
-          :class="['header-btn', isSearchPage ? 'header-btn-primary' : 'header-btn-secondary']"
-          size="medium"
-          @click="$router.push('/choose-service')"
-        >
-          Purchase Report
-        </el-button>
-        <el-button
-          :class="['header-btn', isSearchPage ? 'header-btn-secondary' : 'header-btn-primary']"
-          size="medium"
-          @click="toSearchPage"
-        >
-          Advanced Search
-        </el-button>
-      </div> -->
 
       <!-- Right Side Icons and User：/search 下不显示左侧 icons -->
       <div class="right-section">
-        <template v-if="!isSearchPage">
-          <div class="icons">
-            <el-button
-              type="text"
-              class="icon-btn"
-              size="medium"
-              @click="toSubsribePage"
-            >
-              <img
-                src="@/assets/header/alert.png"
-                alt="Alert"
-                class="icon-image"
-              />
-            </el-button>
-          </div>
-          <el-divider direction="vertical" class="verticel-divider"></el-divider>
-        </template>
         <div class="user-info" @click="$router.push('/')">
           <svg
             class="dashboard-icon"
