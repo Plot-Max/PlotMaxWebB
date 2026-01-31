@@ -33,24 +33,26 @@
 
         <!-- Lot Size -->
         <div class="filter-section">
-          <h3 class="section-title">Lot Size</h3>
-          <div class="unit-selector">
-            <button
-              class="unit-btn"
-              :class="{ active: lotSizeUnit === 'sqft' }"
-              @click="lotSizeUnit = 'sqft'"
-              :disabled="disableSearch"
-            >
-              sqft
-            </button>
-            <button
-              class="unit-btn"
-              :class="{ active: lotSizeUnit === 'acres' }"
-              @click="lotSizeUnit = 'acres'"
-              :disabled="disableSearch"
-            >
-              acres
-            </button>
+          <div class="section-header-row">
+            <h3 class="section-title">Lot Size</h3>
+            <div class="unit-selector">
+              <button
+                class="unit-btn"
+                :class="{ active: lotSizeUnit === 'sqft' }"
+                @click="lotSizeUnit = 'sqft'"
+                :disabled="disableSearch"
+              >
+                sqft
+              </button>
+              <button
+                class="unit-btn"
+                :class="{ active: lotSizeUnit === 'acres' }"
+                @click="lotSizeUnit = 'acres'"
+                :disabled="disableSearch"
+              >
+                acres
+              </button>
+            </div>
           </div>
           <div class="range-inputs">
             <el-input
@@ -815,6 +817,21 @@ export default {
   margin: 0 0 12px 0;
 }
 
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  .section-title {
+    margin-bottom: 0;
+  }
+
+  .unit-selector {
+    margin-bottom: 0;
+  }
+}
+
 .tag-input {
   display: flex;
   flex-wrap: wrap;
@@ -875,18 +892,19 @@ export default {
 .unit-selector {
   display: flex;
   border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
   margin-bottom: 12px;
   background: white;
 
   .unit-btn {
     flex: 1;
-    padding: 8px 16px;
+    padding: 2px 10px;
     border: none;
     background: #f5f5f5;
     color: #666;
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.4;
     cursor: pointer;
     transition: all 0.2s;
 
