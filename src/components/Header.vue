@@ -4,7 +4,11 @@
       <!-- Logo and Brand -->
       <div class="logo-section">
         <div class="logo" @click="$router.push('/')">
-          <img src="/plotmax-tob-logo.jpg" alt="PLOT MAX Logo" class="logo-image" />
+          <img
+            src="/plotmax-tob-logo.jpg"
+            alt="PLOT MAX Logo"
+            class="logo-image"
+          />
         </div>
       </div>
 
@@ -12,34 +16,58 @@
       <div class="search-section">
         <!-- <el-input v-model="searchQuery" placeholder="Search Address" class="search-input"
           prefix-icon="el-icon-search" /> -->
-          <el-autocomplete
-            v-model="searchQuery"
-            :fetch-suggestions="querySearchAsync"
-            :debounce="500"
-            placeholder="Search Address"
-            class="search-input"
-            prefix-icon="el-icon-search"
-            @input="selectedAddress = null"
-            @select="handleSelect"></el-autocomplete>
+        <el-autocomplete
+          v-model="searchQuery"
+          :fetch-suggestions="querySearchAsync"
+          :debounce="500"
+          placeholder="Search Address"
+          class="search-input"
+          prefix-icon="el-icon-search"
+          @input="selectedAddress = null"
+          @select="handleSelect"
+        ></el-autocomplete>
       </div>
 
-      <!-- Action Buttons -->
+      <!-- Action Buttons：/search 下 Advanced Search 为主按钮，Purchase Report 为次要 -->
       <div class="action-section">
-        <el-button type="primary" size="medium" @click="$router.push({path: '/choose-service', query: selectedAddress})" :disabled="!selectedAddress">Purchase Report</el-button>
-        <el-button type="info" size="medium" @click="toSearchPage">Advanced Search</el-button>
+        <el-button
+          :type="isSearchPage ? 'default' : 'primary'"
+          size="medium"
+          @click="
+            $router.push({ path: '/choose-service', query: selectedAddress })
+          "
+          :disabled="!selectedAddress"
+        >
+          Purchase Report
+        </el-button>
+        <el-button
+          :type="isSearchPage ? 'primary' : 'info'"
+          size="medium"
+          @click="toSearchPage"
+        >
+          Advanced Search
+        </el-button>
       </div>
 
-      <!-- Right Side Icons and User -->
+      <!-- Right Side Icons and User：/search 下不显示左侧 icons -->
       <div class="right-section">
-        <div class="icons">
-          <el-button type="text" class="icon-btn" size="medium" @click="toSubsribePage">
-            <img src="@/assets/header/alert.png" alt="Alert" class="icon-image" />
-          </el-button>
-          <!-- <el-button type="text" class="icon-btn" size="medium" @click="toWalletPage">
-              <img src="@/assets/header/info.png" alt="Info" class="icon-image" />
-            </el-button> -->
-        </div>
-        <el-divider direction="vertical" class="verticel-divider"></el-divider>
+        <template v-if="!isSearchPage">
+          <div class="icons">
+            <el-button
+              type="text"
+              class="icon-btn"
+              size="medium"
+              @click="toSubsribePage"
+            >
+              <img
+                src="@/assets/header/alert.png"
+                alt="Alert"
+                class="icon-image"
+              />
+            </el-button>
+          </div>
+          <el-divider direction="vertical" class="verticel-divider"></el-divider>
+        </template>
         <div class="user-info">
           <el-dropdown placement="bottom-start">
             <div class="user-dropdown-trigger">
@@ -49,117 +77,153 @@
               </div>
             </div>
             <el-dropdown-menu slot="dropdown" class="user-dropdown-menu">
-              <el-dropdown-item v-if="userInfo?.user_role == 0" >
-                <el-button type="info" size="medium" @click="$refs.editUserInfoDialog.open()">Edit Info</el-button>
+              <el-dropdown-item v-if="userInfo?.user_role == 0">
+                <el-button
+                  type="info"
+                  size="medium"
+                  @click="$refs.editUserInfoDialog.open()"
+                >
+                  Edit Info
+                </el-button>
               </el-dropdown-item>
               <el-dropdown-item>
-                <el-button type="info" size="medium" @click="toWalletPage">Balance</el-button>
+                <el-button type="info" size="medium" @click="toWalletPage">
+                  Balance
+                </el-button>
               </el-dropdown-item>
               <el-dropdown-item>
-                <el-button type="info" size="medium" @click="toAccountPage">Agent</el-button>
+                <el-button type="info" size="medium" @click="toAccountPage">
+                  Agent
+                </el-button>
               </el-dropdown-item>
-              
             </el-dropdown-menu>
-
           </el-dropdown>
         </div>
         <div class="logout-section">
           <el-button type="text" class="logout-btn" @click="logout">
-            <div style="display: flex; align-items: center; justify-content: center;gap:10px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logout-icon">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" x2="9" y1="12" y2="12"></line>
-            </svg>
-            <span class="logout-text">Logout</span>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="logout-icon"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" x2="9" y1="12" y2="12"></line>
+              </svg>
+              <span class="logout-text">Logout</span>
             </div>
           </el-button>
         </div>
       </div>
     </div>
-    <edit-user-info v-if="userInfo?.user_role == 0" ref="editUserInfoDialog"></edit-user-info>
+    <edit-user-info
+      v-if="userInfo?.user_role == 0"
+      ref="editUserInfoDialog"
+    ></edit-user-info>
   </header>
 </template>
 
 <script>
-import { searchAddress } from '@/apis';
-import EditUserInfo from './EditUserInfo.vue';
-import MapStateMixins from '@/views/mixins/MapStateMixins';
+import { searchAddress } from "@/apis";
+import EditUserInfo from "./EditUserInfo.vue";
+import MapStateMixins from "@/views/mixins/MapStateMixins";
 export default {
-  name: 'Header',
+  name: "Header",
   mixins: [MapStateMixins],
   components: {
     EditUserInfo,
   },
   data() {
     return {
-      searchQuery: '',
+      searchQuery: "",
       selectedAddress: null,
-    }
+    };
+  },
+  computed: {
+    isSearchPage() {
+      return this.$route.path === "/search";
+    },
   },
   watch: {
     $route() {
       // Reset search query when route changes
-      this.searchQuery = '';
-      this.selectedAddress = null
-    }
+      this.searchQuery = "";
+      this.selectedAddress = null;
+    },
   },
   methods: {
     logout() {
       this.changeLogin();
-      this.$router.push('/login');
+      this.$router.push("/login");
     },
     querySearchAsync(queryString, cb) {
-      if(!queryString) {
+      if (!queryString) {
         cb([]);
         return;
       }
-      searchAddress(queryString).then(response => {
-        const results = response.data.items.map(item => {
-          return {
-            value: item.full_addr,
-            gid: item.gid
-          };
+      searchAddress(queryString)
+        .then((response) => {
+          const results = response.data.items.map((item) => {
+            return {
+              value: item.full_addr,
+              gid: item.gid,
+            };
+          });
+          cb(results);
+        })
+        .catch((error) => {
+          console.error("Search error:", error);
+          cb([]);
         });
-        cb(results);
-      }).catch(error => {
-        console.error('Search error:', error);
-        cb([]);
-      });
     },
     handleSelect(item) {
-      console.log('Selected item:', item);
+      console.log("Selected item:", item);
       this.selectedAddress = {
         full_addr: item.value,
-        gid: item.gid
-      }
+        gid: item.gid,
+      };
     },
     toAccountPage() {
-      if(this.$route.path === '/account') return;
-      this.$router.push('/account');
+      if (this.$route.path === "/account") return;
+      this.$router.push("/account");
     },
     toWalletPage() {
-      if(this.$route.path === '/wallet') return;
-      this.$router.push('/wallet');
+      if (this.$route.path === "/wallet") return;
+      this.$router.push("/wallet");
     },
     toReportsPage() {
-      if(this.$route.path === '/report') return;
-      this.$router.push('/report');
+      if (this.$route.path === "/report") return;
+      this.$router.push("/report");
     },
     toSearchPage() {
-      if(this.$route.path === '/search') {
-        if(this.$route.query.mode != 1) {
+      if (this.$route.path === "/search") {
+        if (this.$route.query.mode != 1) {
           return;
         }
-      };
-      this.$router.push('/search');
+      }
+      this.$router.push("/search");
     },
     toSubsribePage() {
-      if(this.$route.path === '/subscribe') return;
-      this.$router.push('/subscribe');
-    }
-  }
-}
+      if (this.$route.path === "/subscribe") return;
+      this.$router.push("/subscribe");
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -292,7 +356,7 @@ export default {
         transition: background-color 0.3s, color 0.3s;
 
         &:hover {
-          background-color: #E0E0E0;
+          background-color: #e0e0e0;
           color: #333;
         }
 

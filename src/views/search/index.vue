@@ -1,6 +1,67 @@
 <template>
-  <div class="search-container">
-    <div class="search-content">
+  <div class="search-page">
+    <!-- 投资策略 + 区域叠加 栏（在 search-container 上方，与下方主容器样式统一） -->
+    <div class="strategy-overlay-bar-wrap">
+      <div class="strategy-overlay-bar">
+      <div class="strategy-section">
+        <h3 class="bar-section-title">INVESTMENT STRATEGY</h3>
+        <div class="strategy-tabs">
+          <button
+            v-for="item in investmentStrategyOptions"
+            :key="item.value"
+            type="button"
+            class="strategy-tab"
+            :class="{ active: investmentStrategy === item.value }"
+            @click="investmentStrategy = item.value"
+          >
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+      <div class="overlays-section">
+        <h3 class="bar-section-title">ZONE OVERLAYS</h3>
+        <div class="overlay-toggles">
+          <button
+            type="button"
+            class="overlay-btn"
+            :class="{ active: zoneOverlays.oppZones }"
+            @click="zoneOverlays.oppZones = !zoneOverlays.oppZones"
+          >
+            <span class="overlay-checkbox">
+              <i v-if="zoneOverlays.oppZones" class="el-icon-check"></i>
+            </span>
+            <span class="overlay-icon" aria-hidden="true">
+              <!-- 闪电图标 -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+            </span>
+            <span class="overlay-label">Opp Zones</span>
+          </button>
+          <button
+            type="button"
+            class="overlay-btn"
+            :class="{ active: zoneOverlays.transitZones }"
+            @click="zoneOverlays.transitZones = !zoneOverlays.transitZones"
+          >
+            <span class="overlay-checkbox">
+              <i v-if="zoneOverlays.transitZones" class="el-icon-check"></i>
+            </span>
+            <span class="overlay-icon" aria-hidden="true">
+              <!-- 公交车图标 -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z"/>
+              </svg>
+            </span>
+            <span class="overlay-label">Transit Zones</span>
+          </button>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="search-container">
+      <div class="search-content">
       <!-- 左侧筛选面板 -->
       <div class="filter-panel">
         <h2 class="panel-title">Search Criteria</h2>
@@ -88,26 +149,6 @@
           </div>
         </div>
 
-        <!-- GFA (sqft) -->
-        <div class="filter-section">
-          <h3 class="section-title">GFA (sqft)</h3>
-          <div class="range-inputs">
-            <el-input
-              v-model="gfaMin"
-              placeholder="Min"
-              :disabled="disableSearch"
-              class="range-input"
-            ></el-input>
-            <span class="range-separator">to</span>
-            <el-input
-              v-model="gfaMax"
-              placeholder="Max"
-              :disabled="disableSearch"
-              class="range-input"
-            ></el-input>
-          </div>
-        </div>
-
         <!-- Historic Building -->
         <div class="filter-section">
           <div class="checkbox-item">
@@ -184,12 +225,6 @@
               <span v-if="filters.buildableSize_max">
                 Max {{ filters.buildableSize_max }}
               </span>
-            </el-breadcrumb-item>
-            <el-breadcrumb-item v-if="filters.gfa_min || filters.gfa_max">
-              GFA:
-              <span v-if="filters.gfa_min">Min {{ filters.gfa_min }}</span>
-              <span v-if="filters.gfa_min && filters.gfa_max">-</span>
-              <span v-if="filters.gfa_max">Max {{ filters.gfa_max }}</span>
             </el-breadcrumb-item>
             <el-breadcrumb-item
               v-if="filters.footprint_min || filters.footprint_max"
@@ -398,6 +433,7 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -440,8 +476,6 @@ export default {
       lotSizeUnit: "sqft",
       lotSizeMin: "",
       lotSizeMax: "",
-      gfaMin: "",
-      gfaMax: "",
 
       // 筛选条件
       filters: {
@@ -451,8 +485,6 @@ export default {
         frontage_max: null,
         buildableSize_min: null,
         buildableSize_max: null,
-        gfa_min: null,
-        gfa_max: null,
         footprint_min: null,
         footprint_max: null,
         notHistoric: false,
@@ -543,6 +575,20 @@ export default {
       ],
       // 表格数据
       tableData: [],
+
+      // 投资策略 + 区域叠加
+      investmentStrategy: "all_listings",
+      investmentStrategyOptions: [
+        { label: "All Listings", value: "all_listings" },
+        { label: "Lot Splits", value: "lot_splits" },
+        { label: "Density Plays", value: "density_plays" },
+        { label: "Expansion Plays", value: "expansion_plays" },
+        { label: "ADU Eligible", value: "adu_eligible" },
+      ],
+      zoneOverlays: {
+        oppZones: false,
+        transitZones: false,
+      },
     };
   },
   mounted() {
@@ -630,10 +676,6 @@ export default {
         this.filters.lot_size_max = null;
       }
 
-      // 转换 GFA
-      this.filters.gfa_min = this.gfaMin ? parseFloat(this.gfaMin) : null;
-      this.filters.gfa_max = this.gfaMax ? parseFloat(this.gfaMax) : null;
-
       // 执行搜索
       this.searchProperties(true);
     },
@@ -647,8 +689,6 @@ export default {
         frontage_max: null,
         buildableSize_min: null,
         buildableSize_max: null,
-        gfa_min: null,
-        gfa_max: null,
         footprint_min: null,
         footprint_max: null,
         notHistoric: false,
@@ -659,8 +699,6 @@ export default {
       this.lotSizeUnit = "sqft";
       this.lotSizeMin = "";
       this.lotSizeMax = "";
-      this.gfaMin = "";
-      this.gfaMax = "";
     },
 
     // 搜索房产
@@ -687,8 +725,6 @@ export default {
         frontage_max: this.filters.frontage_max || null,
         buildable_min: this.filters.buildableSize_min || null,
         buildable_max: this.filters.buildableSize_max || null,
-        gfa_min: this.filters.gfa_min || null,
-        gfa_max: this.filters.gfa_max || null,
         footprint_min: this.filters.footprint_min || null,
         footprint_max: this.filters.footprint_max || null,
         has_history: this.filters.notHistoric ? false : null,
@@ -764,8 +800,7 @@ export default {
 
 <style lang="scss" scoped>
 .search-container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
+  flex: 1;
 }
 
 .search-content {
@@ -1211,6 +1246,137 @@ export default {
   font-size: 13px;
   margin-bottom: 7px;
 }
+
+/* 投资策略 + 区域叠加 栏（与 filter-panel、results-panel 样式统一） */
+.search-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* 与 search-content 同宽、同左右留白；顶部间距收窄（布局 .content 已有 padding-top 20px） */
+.strategy-overlay-bar-wrap {
+  margin: -8px auto 0;
+  padding: 12px 20px 0;
+  max-width: 1400px;
+  box-sizing: border-box;
+}
+
+.strategy-overlay-bar {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+.bar-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #909399;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px 0;
+}
+
+.strategy-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.strategy-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.strategy-tab {
+  padding: 8px 4px;
+  margin: 0 4px 0 0;
+  font-size: 14px;
+  color: #909399;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.strategy-tab:hover {
+  color: #606266;
+}
+
+.strategy-tab.active {
+  color: #2c3e50;
+  font-weight: 700;
+  border-bottom: 4px solid #67c23a;
+}
+
+.overlays-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.overlay-toggles {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.overlay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: #606266;
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.overlay-btn:hover {
+  border-color: #c0c4cc;
+}
+
+.overlay-btn.active {
+  border-color: #67c23a;
+  background: #f0f9eb;
+}
+
+.overlay-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #dcdfe6;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #67c23a;
+}
+
+.overlay-btn.active .overlay-checkbox {
+  border-color: #67c23a;
+  background: #fff;
+}
+
+.overlay-icon {
+  display: inline-flex;
+  color: #606266;
+}
+
+.overlay-label {
+  white-space: nowrap;
+}
 /* 响应式调整 */
 @media (max-width: 1200px) {
   .search-content {
@@ -1233,6 +1399,10 @@ export default {
 }
 
 @media (max-width: 768px) {
+  .strategy-overlay-bar-wrap {
+    margin-top: -8px;
+    padding: 10px 10px 0;
+  }
   .search-content {
     padding: 15px 10px;
   }

@@ -34,6 +34,9 @@ const routes = [
         path: '/search',
         name: 'Search',
         component: () => import('../views/search/index.vue'),
+        meta: {
+          title: 'Zoning Search',
+        },
       },
       {
         path: '/search/result',
