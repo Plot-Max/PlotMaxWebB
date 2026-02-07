@@ -1,0 +1,16 @@
+/**
+ * Element UI 2.x 自定义主题
+ * 基于 element-ui ^2.15.14，覆盖 primary 为主题色 #5cba33
+ *
+ * 原理：在引入 theme-chalk 源码前先定义变量（无 !default），
+ * 这样 common/var.scss 中的 !default 不会覆盖我们的值。
+ */
+
+/* 覆盖主题色 - Primary */
+$--color-primary: #5cba33;
+
+/* 字体路径：指向已编译的 theme-chalk 字体，避免 404 */
+$--font-path: "~element-ui/lib/theme-chalk/fonts";
+
+/* 引入 Element UI theme-chalk 源码（会使用上面定义的变量） */
+@import "~element-ui/packages/theme-chalk/src/index.scss";
