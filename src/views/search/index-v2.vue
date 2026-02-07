@@ -572,57 +572,44 @@
                           content="Wetland"
                           placement="top"
                         >
-                          <span class="flag-icon flag-wetland" title="Wetland">
-                            <svg
-                              viewBox="0 0 24 24"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                            >
-                              <path
-                                d="M12 2C8.13 2 5 5.13 5 9c0 4.17 3.5 7.5 7 11 3.5-3.5 7-6.83 7-11 0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-                              />
-                            </svg>
-                          </span>
+                          <img
+                            :src="flagIcons.wetland"
+                            class="flag-img"
+                            alt="Wetland"
+                          />
                         </el-tooltip>
                         <el-tooltip
                           v-if="scope.row.flood"
                           content="Flood"
                           placement="top"
                         >
-                          <span class="flag-icon flag-flood" title="Flood">
-                            <svg
-                              viewBox="0 0 24 24"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                            >
-                              <path
-                                d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"
-                              />
-                            </svg>
-                          </span>
+                          <img
+                            :src="flagIcons.flood"
+                            class="flag-img"
+                            alt="Flood"
+                          />
                         </el-tooltip>
                         <el-tooltip
-                          v-if="scope.row.has_history || scope.row.historical"
-                          content="Historic"
+                          v-if="scope.row.has_history"
+                          content="Historic building"
                           placement="top"
                         >
-                          <span
-                            class="flag-icon flag-historic"
-                            title="Historic"
-                          >
-                            <svg
-                              viewBox="0 0 24 24"
-                              width="18"
-                              height="18"
-                              fill="currentColor"
-                            >
-                              <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm3.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
-                              />
-                            </svg>
-                          </span>
+                          <img
+                            :src="flagIcons.historic"
+                            class="flag-img"
+                            alt="Historic building"
+                          />
+                        </el-tooltip>
+                        <el-tooltip
+                          v-if="scope.row.has_openspace"
+                          content="Open space"
+                          placement="top"
+                        >
+                          <img
+                            :src="flagIcons.openspace"
+                            class="flag-img"
+                            alt="Open space"
+                          />
                         </el-tooltip>
                         <span v-if="!hasAnyFlag(scope.row)" class="flags-empty">
                           —
@@ -993,6 +980,14 @@ export default {
 
       disableSearch: false,
 
+      // Flags 列图标（土地性质）
+      flagIcons: {
+        wetland: require("@/assets/icons/wetland.png"),
+        flood: require("@/assets/icons/flood.png"),
+        historic: require("@/assets/icons/Historybuilding.png"),
+        openspace: require("@/assets/icons/openspace.png"),
+      },
+
       // 筛选条件
       filters: getInitialFilters(),
       lotSizeUnit: "acre", // sqft, acre
@@ -1162,7 +1157,9 @@ export default {
         row.has_wetland ||
         row.flood ||
         row.has_history ||
-        row.historical
+        row.historical ||
+        row.openspace ||
+        row.has_openspace
       );
     },
     // Zoning 列：优先 policy_zoning，其次 gis_zoning
@@ -1911,7 +1908,7 @@ export default {
   color: #606266;
 }
 
-/* Flags 土地性质图标 */
+/* Flags 土地性质图标（使用 assets 图标） */
 .flags-cell {
   display: flex;
   align-items: center;
@@ -1919,20 +1916,12 @@ export default {
   gap: 6px;
   flex-wrap: wrap;
 }
-.flag-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.flag-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
   cursor: default;
-}
-.flag-wetland {
-  color: #409eff;
-}
-.flag-flood {
-  color: #409eff;
-}
-.flag-historic {
-  color: #e6a23c;
 }
 .flags-empty {
   color: #c0c4cc;

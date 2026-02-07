@@ -5,10 +5,15 @@
       <div class="logo-section">
         <div class="logo" @click="$router.push('/')">
           <img
-            src="/plotmax-tob-logo.jpg"
+            src="@/assets/logo/plotmax-tob-logo.jpg"
             alt="PLOT MAX Logo"
             class="logo-image"
           />
+          <!-- <img
+            src="/plotmax-tob-logo.jpg"
+            alt="PLOT MAX Logo"
+            class="logo-image"
+          /> -->
         </div>
         <span v-if="pageTitle" class="page-title">{{ pageTitle }}</span>
       </div>
