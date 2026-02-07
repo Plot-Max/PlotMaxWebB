@@ -108,7 +108,29 @@
 
             <!-- Lot Size -->
             <div class="filter-section">
-              <h3 class="section-title">Lot Size</h3>
+              <div class="section-header-row">
+                <h3 class="section-title">Lot Size</h3>
+                <div class="lot-size-unit-switcher">
+                  <button
+                    type="button"
+                    class="lot-size-unit-item"
+                    :class="{ active: lotSizeUnit === 'sqft' }"
+                    :disabled="disableSearch"
+                    @click="lotSizeUnit = 'sqft'"
+                  >
+                    sqft
+                  </button>
+                  <button
+                    type="button"
+                    class="lot-size-unit-item"
+                    :class="{ active: lotSizeUnit === 'acre' }"
+                    :disabled="disableSearch"
+                    @click="lotSizeUnit = 'acre'"
+                  >
+                    acres
+                  </button>
+                </div>
+              </div>
               <div class="range-inputs">
                 <el-select
                   v-model="filters.lot_size_min"
@@ -126,7 +148,7 @@
                         item.value < filters.lot_size_max
                     )"
                     :key="item.value"
-                    :label="item.label"
+                    :label="lotSizeUnit === 'sqft' ? item.label2 : item.label"
                     :value="item.value"
                   ></el-option>
                 </el-select>
@@ -147,7 +169,7 @@
                         item.value > filters.lot_size_min
                     )"
                     :key="item.value"
-                    :label="item.label"
+                    :label="lotSizeUnit === 'sqft' ? item.label2 : item.label"
                     :value="item.value"
                   ></el-option>
                 </el-select>
@@ -615,7 +637,12 @@
 
                   <!-- Zoning 列：key 含选项长度+选中数，确保表头（含气泡）在选中变化时重新渲染 -->
                   <el-table-column
-                    :key="'zoning-' + (cityZoningSelectionList || []).length + '-' + (selectedZoningTypes || []).length"
+                    :key="
+                      'zoning-' +
+                      (cityZoningSelectionList || []).length +
+                      '-' +
+                      (selectedZoningTypes || []).length
+                    "
                     prop="zoning"
                     label="Zoning Name"
                     width="180"
@@ -962,23 +989,58 @@ export default {
         notPartOfHistoric: true,
         built_utilization_max: null,
       },
+      lotSizeUnit: 'acre', // sqft, acre
       lotSizeMinOptions: [
-        // { label: '1,000 sqft', value: 1000 },
-        // { label: '2,000 sqft', value: 2000 },
-        // { label: '3,000 sqft', value: 3000 },
-        // { label: '4,000 sqft', value: 4000 },
-        // { label: '5,000 sqft', value: 5000 },
-        // { label: '7,000 sqft', value: 7000 },
-        { label: "0.25 acre(10,890 sqft)", value: 10890 },
-        { label: "0.5 acre", value: 21780 },
-        { label: "1 acre", value: 43560 },
-        { label: "1.5 acre", value: 65340 },
-        { label: "2 acre", value: 87120 },
-        { label: "5 acre", value: 217800 },
-        { label: "10 acre", value: 435600 },
-        { label: "20 acre", value: 871200 },
-        { label: "50 acre", value: 2178000 },
-        { label: "100 acre", value: 4356000 },
+        {
+          label: "0.25", // 是 acre 的值
+          label2: "10,890", // 是 sqft 的单位值
+          value: 10890,
+        },
+        {
+          label: "0.5",
+          label2: "21,780",
+          value: 21780,
+        },
+        {
+          label: "1",
+          label2: "43,560",
+          value: 43560,
+        },
+        {
+          label: "1.5",
+          label2: "65,340",
+          value: 65340,
+        },
+        {
+          label: "2",
+          label2: "87,120",
+          value: 87120,
+        },
+        {
+          label: "5",
+          label2: "217,800",
+          value: 217800,
+        },
+        {
+          label: "10",
+          label2: "435,600",
+          value: 435600,
+        },
+        {
+          label: "20",
+          label2: "871,200",
+          value: 871200,
+        },
+        {
+          label: "50",
+          label2: "2,178,000",
+          value: 2178000,
+        },
+        {
+          label: "100",
+          label2: "4,356,000",
+          value: 4356000,
+        },
       ],
       frontageOptions: [
         { label: "50 ft", value: 50 },
@@ -1589,6 +1651,44 @@ export default {
   }
 }
 
+/* Lot Size 单位切换：参考图样式，选中项白底圆角框+深色字，未选中灰色字 */
+.lot-size-unit-switcher {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  background: #f6f6f4;
+  border: 1px solid #e2e6e8;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+
+  .lot-size-unit-item {
+    padding: 3px 7px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, box-shadow 0.2s;font-weight: 600;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.active {
+      background: #fff;
+      color: #2c3e50;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      
+    }
+
+    &:not(:disabled):not(.active):hover {
+      color: #5d6d7e;
+    }
+  }
+}
+
 .slider-container {
   width: calc(100% - 16px);
   padding: 8px 0;
@@ -1941,19 +2041,19 @@ export default {
 }
 .zoning-btn {
   padding: 6px 14px;
-    font-size: 13px;
-    border-radius: 6px;
-    /* border: 1px solid #67c23a; */
-    color: #606266;
-    background: #fff;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    border-color: #333;
-    outline: none;
-    border: none;
-    border: 2px solid #efefef;
-    color: #000;
-    padding: 12px 25px;
+  font-size: 13px;
+  border-radius: 6px;
+  /* border: 1px solid #67c23a; */
+  color: #606266;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border-color: #333;
+  outline: none;
+  border: none;
+  border: 2px solid #efefef;
+  color: #000;
+  padding: 12px 25px;
 }
 .zoning-btn:hover {
   border-color: #85ce61;
