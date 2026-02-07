@@ -237,14 +237,14 @@
               </div>
             </div>
 
-            <!-- History commission：Not Historic Building（传参与旧版一致：has_history 为 false 或 null） -->
+            <!-- History commission：Historic building（勾选传 has_history: true，不勾选传 null） -->
             <div class="filter-section">
               <div class="checkbox-item">
                 <el-checkbox
                   v-model="filters.notHistoric"
                   :disabled="disableSearch"
                 >
-                  Not Historic Building
+                  Historic building
                 </el-checkbox>
               </div>
             </div>
@@ -355,7 +355,7 @@
                     </span>
                   </el-breadcrumb-item>
                   <el-breadcrumb-item v-if="filters.notHistoric">
-                    Not Historic Building
+                    Historic building
                   </el-breadcrumb-item>
                   <el-breadcrumb-item v-if="filters.built_utilization_max">
                     Built Utilization:{{ filters.built_utilization_max }}%
@@ -1329,7 +1329,7 @@ export default {
         gfa_max: this.filters.gfa_max || null,
         footprint_min: this.filters.footprint_min || null,
         footprint_max: this.filters.footprint_max || null,
-        has_history: this.filters.notHistoric ? false : null,
+        has_history: this.filters.notHistoric ? true : null,
         in_history: this.filters.notPartOfHistoric ? false : null,
         built_utilization_max: this.filters.built_utilization_max || null,
         no_envi_setback: this.filters.no_envi_setback || null,
