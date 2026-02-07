@@ -1,25 +1,39 @@
+/**
+ * 通用样式与工具类
+ * 包含 Element 按钮覆盖、flex 工具、margin/padding 工具类。
+ *
+ * 原理：通过变量统一主题色，工具类用 @for 生成 1–20px 的 margin/padding。
+ */
+
+/* 主题色（与 element-theme 保持一致时可复用 $--color-primary） */
+$--color-primary: #5cba33;
+$--color-primary-light: #E8F5E2;
+
+/* Element 按钮覆盖 */
 .el-button--primary {
-    background-color: #5A8DEE;
+    background-color: $--color-primary;
     &:hover {
-        background-color: lighten(#5A8DEE, 10%);
+        background-color: lighten($--color-primary, 10%);
     }
     &:active, &:focus {
-        background-color: darken(#5A8DEE, 10%);
+        background-color: darken($--color-primary, 10%);
     }
 }
 .el-button--info {
-    background-color: #E2ECFF;
-    color: #5A8DEE;
+    background-color: $--color-primary-light;
+    color: $--color-primary;
     border: none;
     &:hover {
-        color: #5A8DEE;
-        background-color: lighten(#E2ECFF, 2%);
+        color: $--color-primary;
+        background-color: lighten($--color-primary-light, 2%);
     }
     &:active, &:focus {
-        background-color: darken(#E2ECFF, 2%);
-        color: #5A8DEE;
+        background-color: darken($--color-primary-light, 2%);
+        color: $--color-primary;
     }
 }
+
+/* Flex 工具类 */
 .flex {
     display: flex;
     &.align-center {
@@ -33,7 +47,7 @@
     }
 }
 
-// Margin utility classes - 1px to 10px
+/* Margin 工具类 - 1px 至 20px */
 @for $i from 1 through 20 {
     .margin#{$i} {
         margin: #{$i}px;
@@ -60,7 +74,7 @@
     }
 }
 
-// Padding utility classes - 1px to 10px
+/* Padding 工具类 - 1px 至 20px */
 @for $i from 1 through 20 {
     .padding#{$i} {
         padding: #{$i}px;

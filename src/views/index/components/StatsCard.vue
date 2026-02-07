@@ -1,73 +1,71 @@
 <template>
   <el-card class="stats-card" shadow="hover">
-    <div  @click="handleClick" style="cursor: pointer;">
+    <div @click="handleClick" style="cursor: pointer">
       <div class="card-header">
-      <h3 class="card-title">{{ title }}</h3>
-      <p class="card-subtitle" v-if="subtitle" v-html="subtitle"></p>
-    </div>
-    <div class="card-content">
-      <div class="main-number" v-if="mainNumber != null">
-        <!-- {{ mainNumber }} -->
-        <el-statistic
+        <h3 class="card-title">{{ title }}</h3>
+        <p class="card-subtitle" v-if="subtitle" v-html="subtitle"></p>
+      </div>
+      <div class="card-content">
+        <div class="main-number" v-if="mainNumber != null">
+          <el-statistic
             group-separator=","
             :precision="0"
             :value="mainNumber"
           ></el-statistic>
+        </div>
+        <el-progress
+          v-if="showProgressBar"
+          :percentage="progressPercentage || 0"
+          :show-text="false"
+          :stroke-width="6"
+          color="#5cba33"
+          class="progress-bar"
+        />
+        <p class="card-description" v-if="description">{{ description }}</p>
+        <!-- 插槽用于自定义内容，如按钮等 -->
+        <slot name="action"></slot>
       </div>
-      <el-progress 
-        v-if="showProgressBar"
-        :percentage="progressPercentage || 0"
-        :show-text="false"
-        :stroke-width="6"
-        color="#4a90e2"
-        class="progress-bar"
-      />
-      <p class="card-description" v-if="description">{{ description }}</p>
-      <!-- 插槽用于自定义内容，如按钮等 -->
-      <slot name="action"></slot>
-    </div>
     </div>
   </el-card>
 </template>
 
 <script>
 export default {
-  name: 'StatsCard',
+  name: "StatsCard",
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     subtitle: {
       type: String,
-      default: ''
+      default: "",
     },
     mainNumber: {
       type: [String, Number],
       default: null,
-      required: false
+      required: false,
     },
     description: {
       type: String,
-      default: ''
+      default: "",
     },
     showProgressBar: {
       type: Boolean,
-      default: true
+      default: true,
     },
     progressPercentage: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   methods: {
-
     handleClick() {
-      console.log('Card clicked');
-      this.$emit('card-click');
-    } 
-  }
-}
+      console.log("Card clicked");
+      this.$emit("card-click");
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -87,7 +85,7 @@ export default {
 
     .card-subtitle {
       font-size: 14px;
-      color: #4a90e2;
+      color: #5cba33;
       margin: 0;
       font-weight: 500;
     }
@@ -97,7 +95,7 @@ export default {
     ::v-deep .el-statistic .con {
       font-size: 20px;
       font-weight: bold;
-      color: #4a90e2;
+      color: #5cba33;
       margin-bottom: 12px;
       text-align: left;
       justify-content: flex-start;

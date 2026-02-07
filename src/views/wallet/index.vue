@@ -85,12 +85,12 @@
                     <div class="breakdown-item">
                         <span class="breakdown-label">Within the package</span>
                         <span class="breakdown-value">{{ subscriptionInfo.plan?.report_balance || 0 }}</span>
-                        <el-progress :percentage="reportWithinPackagePercentage || 0" :stroke-width="6" :show-text="false" color="#4a90e2"></el-progress>
+                        <el-progress :percentage="reportWithinPackagePercentage || 0" :stroke-width="6" :show-text="false" class="wallet-progress"></el-progress>
                     </div>
                     <div class="breakdown-item">
                         <span class="breakdown-label">Extra purchased</span>
                         <span class="breakdown-value">{{ subscriptionInfo.totalReportPointBalance - (subscriptionInfo.plan?.report_balance || 0) }}</span>
-                        <el-progress :percentage="reportExtraPurchasedPercentage || 0" :stroke-width="6" :show-text="false" color="#4a90e2"></el-progress>
+                        <el-progress :percentage="reportExtraPurchasedPercentage || 0" :stroke-width="6" :show-text="false" class="wallet-progress"></el-progress>
                     </div>
                 </div>
                 <div class="details-section">
@@ -120,12 +120,12 @@
                     <div class="breakdown-item">
                         <span class="breakdown-label">Within the package</span>
                         <span class="breakdown-value">{{ (subscriptionInfo.plan?.search_balance || 0).toLocaleString() }}</span>
-                        <el-progress :percentage="resultWithinPackagePercentage || 0" :stroke-width="6" :show-text="false" color="#4a90e2"></el-progress>
+                        <el-progress :percentage="resultWithinPackagePercentage || 0" :stroke-width="6" :show-text="false" class="wallet-progress"></el-progress>
                     </div>
                     <div class="breakdown-item">
                         <span class="breakdown-label">Extra purchased</span>
                         <span class="breakdown-value">{{ (subscriptionInfo.totalSearchPointBalance - (subscriptionInfo.plan?.search_balance || 0)).toLocaleString() }}</span>
-                        <el-progress :percentage="resultExtraPurchasedPercentage || 0" :stroke-width="6" :show-text="false" color="#4a90e2"></el-progress>
+                        <el-progress :percentage="resultExtraPurchasedPercentage || 0" :stroke-width="6" :show-text="false" class="wallet-progress"></el-progress>
                     </div>
                 </div>
                 <div class="details-section">
@@ -337,6 +337,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// 引入通用样式变量
+@import '@/assets/css/common.scss';
+
+// 钱包页面颜色配置（基于 $--color-primary 绿色系）
+$wallet-primary: $--color-primary;
+$wallet-primary-hover: darken($--color-primary, 10%);
+$wallet-primary-disabled: lighten($--color-primary, 35%);
+
 .wallet-page {
     padding: 20px;
     max-width: 1200px;
@@ -380,7 +388,7 @@ export default {
 .card-title {
     font-size: 18px;
     font-weight: 600;
-    color: #4a90e2;
+    color: $wallet-primary;
     margin: 0 0 20px 0;
 }
 
@@ -392,27 +400,27 @@ export default {
     .plan-name {
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: #333333;
         margin-bottom: 8px;
     }
 
     .plan-price {
         font-size: 20px;
         font-weight: 700;
-        color: #333;
+        color: #333333;
         margin-bottom: 8px;
     }
 
     .plan-details {
         font-size: 14px;
-        color: #666;
+        color: #666666;
         margin-bottom: 4px;
         line-height: 25px;
     }
 
     .plan-validity {
         font-size: 14px;
-        color: #666;
+        color: #666666;
         line-height: 25px;
     }
     .actions {
@@ -427,12 +435,12 @@ export default {
     .tip {
         margin-top: 10px;
         font-size: 13px;
-        color: red;
+        color: #F56C6C;
     }
 }
 
 .change-plan-btn {
-    background: #4a90e2;
+    background: $wallet-primary;
     color: white;
     border: none;
     border-radius: 6px;
@@ -443,7 +451,7 @@ export default {
     transition: all 0.2s ease;
 
     &:hover {
-        background: #357abd;
+        background: $wallet-primary-hover;
     }
 }
 
@@ -459,14 +467,14 @@ export default {
 .balance-title {
     font-size: 16px;
     font-weight: 600;
-    color: #4a90e2;
+    color: $wallet-primary;
     margin: 0 0 16px 0;
 }
 
 .balance-number {
     font-size: 36px;
     font-weight: 700;
-    color: #333;
+    color: #333333;
     margin-bottom: 20px;
 }
 
@@ -481,7 +489,7 @@ export default {
 
     .breakdown-label {
         font-size: 14px;
-        color: #666;
+        color: #666666;
         margin-bottom: 8px;
         display: flex;
         align-items: center;
@@ -497,14 +505,14 @@ export default {
     }
 
     .breakdown-label::before {
-        background: #4a90e2;
+        background: $wallet-primary;
     }
 
 
     .breakdown-value {
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: #333333;
         margin-bottom: 8px;
         text-align: right;
     }
@@ -521,11 +529,11 @@ export default {
 
 .details-toggle {
     font-size: 14px;
-    color: #4a90e2;
+    color: $wallet-primary;
     cursor: pointer;
 
     &:hover {
-        color: #357abd;
+        color: $wallet-primary-hover;
     }
 }
 
@@ -538,8 +546,8 @@ export default {
         padding: 8px 0;
         font-size: 14px;
         font-weight: 600;
-        color: #666;
-        background: #f8f9fa;
+        color: #666666;
+        background: #f5f7fa;
         padding: 8px 12px;
         border-radius: 4px;
     }
@@ -549,7 +557,7 @@ export default {
         justify-content: space-between;
         padding: 8px 12px;
         font-size: 14px;
-        color: #333;
+        color: #333333;
         border-bottom: 1px solid #f0f0f0;
 
         &:last-child {
@@ -586,7 +594,7 @@ export default {
 
     .supplement-price {
         font-size: 14px;
-        color: #666;
+        color: #666666;
         margin-left: auto;
     }
 }
@@ -608,7 +616,7 @@ export default {
     z-index: 2;
 
     &:hover {
-        background: #e0e0e0;
+        background: rgba(0, 0, 0, 0.08);
     }
 
     &:first-child {
@@ -633,7 +641,7 @@ export default {
     text-align: center;
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: #333333;
     background: white;
     transition: all 0.2s ease;
     padding: 0 32px;
@@ -641,12 +649,12 @@ export default {
 
     &:focus {
         outline: none;
-        border-color: #4a90e2;
-        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        border-color: $wallet-primary;
+        box-shadow: 0 0 0 3px rgba($wallet-primary, 0.1);
     }
 
     &:hover {
-        border-color: #c1c9d2;
+        border-color: darken(#e1e8ed, 10%);
     }
 
     // 隐藏数字输入框的箭头
@@ -665,7 +673,7 @@ export default {
 
 .pay-btn {
     width: 100%;
-    background: #4a90e2;
+    background: $wallet-primary;
     color: white;
     border: none;
     border-radius: 8px;
@@ -676,21 +684,32 @@ export default {
     transition: all 0.2s ease;
 
     &:hover {
-        background: #357abd;
+        background: $wallet-primary-hover;
         transform: translateY(-1px);
     }
     &:disabled {
-        background: #a0c4f7;
+        background: $wallet-primary-disabled;
         cursor: not-allowed;
         transform: none;
         color: white;
     }
 }
+
+// 钱包进度条颜色覆盖
+.wallet-progress {
+    ::v-deep .el-progress-bar__outer {
+        background-color: #f5f7fa;
+    }
+    ::v-deep .el-progress-bar__inner {
+        background-color: $wallet-primary;
+    }
+}
+
 ::v-deep .plan-pay {
-  background: #5A8DEE;
-  box-shadow: 0px 2px 4px 0px rgba(90,141,238,0.4);
+  background: $wallet-primary;
+  box-shadow: 0px 2px 4px 0px rgba($wallet-primary, 0.4);
   border-radius: 4px;
-  color: #FFFFFF;
+  color: white;
   padding: 1px 6px;
   margin-left: 5px;
 }
