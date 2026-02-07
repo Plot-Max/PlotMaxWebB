@@ -177,7 +177,8 @@ export default {
 
         // 删除账户
         handleDelete(row) {
-            this.$confirm(`Confirm delete group user ${row.username}`, 'Warning', {
+            // this.$confirm(`Confirm delete group user ${row.username}`, 'Warning', {
+            this.$confirm(`Confirm delete group user`, 'Warning', {
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
                 type: 'warning'
