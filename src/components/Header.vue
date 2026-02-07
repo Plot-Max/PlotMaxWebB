@@ -4,36 +4,64 @@
       <!-- Logo and Brand -->
       <div class="logo-section">
         <div class="logo" @click="$router.push('/')">
-          <img src="@/assets/logo/logo.png" alt="PLOT MAX Logo" class="logo-image" />
+          <img
+            src="@/assets/logo/plotmax-tob-logo.jpg"
+            alt="PLOT MAX Logo"
+            class="logo-image"
+          />
+          <!-- <img
+            src="@/assets/logo/logo.png"
+            alt="PLOT MAX Logo"
+            class="logo-image"
+          /> -->
         </div>
       </div>
 
       <!-- Search Section -->
       <div class="search-section">
-        <!-- <el-input v-model="searchQuery" placeholder="Search Address" class="search-input"
-          prefix-icon="el-icon-search" /> -->
-          <el-autocomplete
-            v-model="searchQuery"
-            :fetch-suggestions="querySearchAsync"
-            :debounce="500"
-            placeholder="Search Address"
-            class="search-input"
-            prefix-icon="el-icon-search"
-            @input="selectedAddress = null"
-            @select="handleSelect"></el-autocomplete>
+        <el-autocomplete
+          v-model="searchQuery"
+          :fetch-suggestions="querySearchAsync"
+          :debounce="500"
+          placeholder="Search Address"
+          class="search-input"
+          prefix-icon="el-icon-search"
+          @input="selectedAddress = null"
+          @select="handleSelect"
+        ></el-autocomplete>
       </div>
 
       <!-- Action Buttons -->
       <div class="action-section">
-        <el-button type="primary" size="medium" @click="$router.push({path: '/choose-service', query: selectedAddress})" :disabled="!selectedAddress">Purchase Report</el-button>
-        <el-button type="info" size="medium" @click="toSearchPage">Advanced Search</el-button>
+        <el-button
+          type="primary"
+          size="medium"
+          @click="
+            $router.push({ path: '/choose-service', query: selectedAddress })
+          "
+          :disabled="!selectedAddress"
+        >
+          Purchase Report
+        </el-button>
+        <el-button type="info" size="medium" @click="toSearchPage">
+          Advanced Search
+        </el-button>
       </div>
 
       <!-- Right Side Icons and User -->
       <div class="right-section">
         <div class="icons">
-          <el-button type="text" class="icon-btn" size="medium" @click="toSubsribePage">
-            <img src="@/assets/header/alert.png" alt="Alert" class="icon-image" />
+          <el-button
+            type="text"
+            class="icon-btn"
+            size="medium"
+            @click="toSubsribePage"
+          >
+            <img
+              src="@/assets/header/alert.png"
+              alt="Alert"
+              class="icon-image"
+            />
           </el-button>
           <!-- <el-button type="text" class="icon-btn" size="medium" @click="toWalletPage">
               <img src="@/assets/header/info.png" alt="Info" class="icon-image" />
@@ -43,117 +71,139 @@
         <div class="user-info">
           <el-dropdown placement="bottom-start">
             <div class="user-dropdown-trigger">
-              <el-avatar :size="40" background-color="#4a90e2" color="#fff" :src="userInfo?.logo">
-                {{ userInfo?.userEmail?.substring(0, 1).toUpperCase() || 'U' }}
+              <el-avatar
+                :size="40"
+                background-color="#4a90e2"
+                color="#fff"
+                :src="userInfo?.logo"
+              >
+                {{ userInfo?.userEmail?.substring(0, 1).toUpperCase() || "U" }}
               </el-avatar>
               <div class="user-details">
                 <div class="user-name">{{ userInfo?.userEmail }}</div>
-                <div class="user-role">{{ userInfo?.user_role == 0 ? 'Broker' : 'Agent' }}</div>
+                <div class="user-role">
+                  {{ userInfo?.user_role == 0 ? "Broker" : "Agent" }}
+                </div>
               </div>
             </div>
             <el-dropdown-menu slot="dropdown" class="user-dropdown-menu">
-              <el-dropdown-item v-if="userInfo?.user_role == 0" >
-                <el-button type="info" size="medium" @click="$refs.editUserInfoDialog.open()">Edit Info</el-button>
+              <el-dropdown-item v-if="userInfo?.user_role == 0">
+                <el-button
+                  type="info"
+                  size="medium"
+                  @click="$refs.editUserInfoDialog.open()"
+                >
+                  Edit Info
+                </el-button>
               </el-dropdown-item>
               <el-dropdown-item>
-                <el-button type="info" size="medium" @click="toWalletPage">Balance</el-button>
+                <el-button type="info" size="medium" @click="toWalletPage">
+                  Balance
+                </el-button>
               </el-dropdown-item>
               <el-dropdown-item>
-                <el-button type="info" size="medium" @click="toAccountPage">Agent</el-button>
+                <el-button type="info" size="medium" @click="toAccountPage">
+                  Agent
+                </el-button>
               </el-dropdown-item>
               <el-dropdown-item>
-                <el-button type="info" size="medium" @click="logout">Log out</el-button>
+                <el-button type="info" size="medium" @click="logout">
+                  Log out
+                </el-button>
               </el-dropdown-item>
-              
             </el-dropdown-menu>
-
           </el-dropdown>
         </div>
       </div>
     </div>
-    <edit-user-info v-if="userInfo?.user_role == 0" ref="editUserInfoDialog"></edit-user-info>
+    <edit-user-info
+      v-if="userInfo?.user_role == 0"
+      ref="editUserInfoDialog"
+    ></edit-user-info>
   </header>
 </template>
 
 <script>
-import { searchAddress } from '@/apis';
-import EditUserInfo from './EditUserInfo.vue';
-import MapStateMixins from '@/views/mixins/MapStateMixins';
+import { searchAddress } from "@/apis";
+import EditUserInfo from "./EditUserInfo.vue";
+import MapStateMixins from "@/views/mixins/MapStateMixins";
 export default {
-  name: 'Header',
+  name: "Header",
   mixins: [MapStateMixins],
   components: {
     EditUserInfo,
   },
   data() {
     return {
-      searchQuery: '',
+      searchQuery: "",
       selectedAddress: null,
-    }
+    };
   },
   watch: {
     $route() {
       // Reset search query when route changes
-      this.searchQuery = '';
-      this.selectedAddress = null
-    }
+      this.searchQuery = "";
+      this.selectedAddress = null;
+    },
   },
   methods: {
     logout() {
       this.changeLogin();
-      this.$router.push('/login');
+      this.$router.push("/login");
     },
     querySearchAsync(queryString, cb) {
-      if(!queryString) {
+      if (!queryString) {
         cb([]);
         return;
       }
-      searchAddress(queryString).then(response => {
-        const results = response.data.items.map(item => {
-          return {
-            value: item.full_addr,
-            gid: item.gid
-          };
+      searchAddress(queryString)
+        .then((response) => {
+          const results = response.data.items.map((item) => {
+            return {
+              value: item.full_addr,
+              gid: item.gid,
+            };
+          });
+          cb(results);
+        })
+        .catch((error) => {
+          console.error("Search error:", error);
+          cb([]);
         });
-        cb(results);
-      }).catch(error => {
-        console.error('Search error:', error);
-        cb([]);
-      });
     },
     handleSelect(item) {
-      console.log('Selected item:', item);
+      console.log("Selected item:", item);
       this.selectedAddress = {
         full_addr: item.value,
-        gid: item.gid
-      }
+        gid: item.gid,
+      };
     },
     toAccountPage() {
-      if(this.$route.path === '/account') return;
-      this.$router.push('/account');
+      if (this.$route.path === "/account") return;
+      this.$router.push("/account");
     },
     toWalletPage() {
-      if(this.$route.path === '/wallet') return;
-      this.$router.push('/wallet');
+      if (this.$route.path === "/wallet") return;
+      this.$router.push("/wallet");
     },
     toReportsPage() {
-      if(this.$route.path === '/report') return;
-      this.$router.push('/report');
+      if (this.$route.path === "/report") return;
+      this.$router.push("/report");
     },
     toSearchPage() {
-      if(this.$route.path === '/search') {
-        if(this.$route.query.mode != 1) {
+      if (this.$route.path === "/search") {
+        if (this.$route.query.mode != 1) {
           return;
         }
-      };
-      this.$router.push('/search');
+      }
+      this.$router.push("/search");
     },
     toSubsribePage() {
-      if(this.$route.path === '/subscribe') return;
-      this.$router.push('/subscribe');
-    }
-  }
-}
+      if (this.$route.path === "/subscribe") return;
+      this.$router.push("/subscribe");
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

@@ -2,27 +2,30 @@
   <div class="layout-default">
     <component :is="headerComponent" />
     <div class="content">
-      <router-view/>
+      <router-view />
     </div>
   </div>
 </template>
 
 <script>
-import Header from '@/components/Header.vue'
-import HeaderV2 from '@/components/HeaderV2.vue'
+import Header from "@/components/Header.vue";
+import HeaderV2 from "@/components/HeaderV2.vue";
 
 export default {
-  name: 'DefaultLayout',
+  name: "DefaultLayout",
   components: {
     Header,
     HeaderV2,
   },
   computed: {
     headerComponent() {
-      return this.$route.path === '/search/v2' ? 'HeaderV2' : 'Header'
+      // return this.$route.path === '/search/v2' ? 'HeaderV2' : 'Header'
+      return this.$route.path === "/search/v2" || this.$route.path === "/search"
+        ? "HeaderV2"
+        : "Header";
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
