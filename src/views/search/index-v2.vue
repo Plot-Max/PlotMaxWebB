@@ -630,12 +630,12 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column
+                  <!-- <el-table-column
                     prop="historical"
                     label="HISTORICAL"
                     width="105"
                     align="center"
-                  ></el-table-column>
+                  ></el-table-column> -->
 
                   <!-- Zoning 列：key 含选项长度+选中数，确保表头（含气泡）在选中变化时重新渲染 -->
                   <el-table-column
