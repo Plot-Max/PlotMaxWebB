@@ -840,6 +840,24 @@
 import { searchComplex, buySearch, searchCity } from "@/apis";
 import SearchPagination from "@/components/SearchPagination.vue";
 
+function getInitialFilters() {
+  return {
+    lot_size_min: 2,
+    lot_size_max: null,
+    frontage_min: null,
+    frontage_max: null,
+    buildableSize_min: null,
+    buildableSize_max: null,
+    gfa_min: null,
+    gfa_max: null,
+    footprint_min: null,
+    footprint_max: null,
+    notHistoric: false,
+    notPartOfHistoric: true,
+    built_utilization_max: 0,
+  };
+}
+
 export default {
   name: "SearchPage",
   components: { SearchPagination },
@@ -974,22 +992,8 @@ export default {
       disableSearch: false,
 
       // 筛选条件
-      filters: {
-        lot_size_min: 2,
-        lot_size_max: null,
-        frontage_min: null,
-        frontage_max: null,
-        buildableSize_min: null,
-        buildableSize_max: null,
-        gfa_min: null,
-        gfa_max: null,
-        footprint_min: null,
-        footprint_max: null,
-        notHistoric: false,
-        notPartOfHistoric: true,
-        built_utilization_max: null,
-      },
-      lotSizeUnit: 'acre', // sqft, acre
+      filters: getInitialFilters(),
+      lotSizeUnit: "acre", // sqft, acre
       lotSizeMinOptions: [
         {
           label: "0.25", // 是 acre 的值
@@ -1281,22 +1285,7 @@ export default {
 
     // 重置筛选
     resetFilters() {
-      this.filters = {
-        lot_size_min: 2,
-        lot_size_max: null,
-        frontage_min: null,
-        frontage_max: null,
-        buildableSize_min: null,
-        buildableSize_max: null,
-        gfa_min: null,
-        gfa_max: null,
-        footprint_min: null,
-        footprint_max: null,
-        notHistoric: false,
-        notPartOfHistoric: true,
-        built_utilization_max: null,
-        no_envi_setback: null,
-      };
+      this.filters = getInitialFilters();
       this.selectedTags = [];
     },
 
@@ -1669,7 +1658,8 @@ export default {
     background: transparent;
     color: #7f8c8d;
     cursor: pointer;
-    transition: color 0.2s, background 0.2s, box-shadow 0.2s;font-weight: 600;
+    transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+    font-weight: 600;
 
     &:disabled {
       opacity: 0.6;
@@ -1680,7 +1670,6 @@ export default {
       background: #fff;
       color: #2c3e50;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-      
     }
 
     &:not(:disabled):not(.active):hover {
