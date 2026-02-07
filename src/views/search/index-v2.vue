@@ -80,9 +80,9 @@
           <div class="filter-panel">
             <h2 class="panel-title">Search Criteria</h2>
 
-            <!-- City/Town -->
+            <!-- City/Zip -->
             <div class="filter-section">
-              <h3 class="section-title">City/Town</h3>
+              <h3 class="section-title">City/Zip</h3>
               <div class="tag-input">
                 <el-tag
                   v-for="tag in selectedTags"
@@ -100,7 +100,7 @@
                   @keyup.enter.native="handleInputConfirm"
                   @select="handleSelect"
                   :fetch-suggestions="querySearchAsync"
-                  placeholder="City/Town"
+                  placeholder="City/Zip"
                   :disabled="disableSearch"
                 ></el-autocomplete>
               </div>
@@ -178,7 +178,8 @@
 
             <!-- Built Utilization -->
             <div class="filter-section">
-              <h3 class="section-title">Built Utilization</h3>
+              <!-- <h3 class="section-title">Built Utilization</h3> -->
+              <h3 class="section-title">Utilization (%)</h3>
               <div class="slider-container">
                 <el-slider
                   v-model="filters.built_utilization_max"
@@ -195,7 +196,8 @@
 
             <!-- Gross Floor Area (sqft) -->
             <div class="filter-section">
-              <h3 class="section-title">Gross Floor Area（sqft）</h3>
+              <!-- <h3 class="section-title">Gross Floor Area（sqft）</h3> -->
+              <h3 class="section-title">GFA (sqft)</h3>
               <div class="range-inputs">
                 <el-select
                   v-model="filters.gfa_min"
@@ -1234,7 +1236,7 @@ export default {
     },
     // 添加标签（保留原方法作为备份）
     addTag() {
-      this.$prompt("Please input city/town", "Add Tag", {
+      this.$prompt("Please input City/Zip", "Add Tag", {
         confirmButtonText: "OK",
         cancelButtonText: "Cancel",
       })
