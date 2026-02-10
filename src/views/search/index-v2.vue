@@ -1327,7 +1327,7 @@ export default {
         footprint_min: this.filters.footprint_min || null,
         footprint_max: this.filters.footprint_max || null,
         has_history: this.filters.notHistoric ? true : null,
-        in_history: this.filters.notPartOfHistoric ? false : null,
+        // in_history: this.filters.notPartOfHistoric ? false : null,
         built_utilization_max: this.filters.built_utilization_max || null,
         no_envi_setback: this.filters.no_envi_setback || null,
         lot_split: this.investmentStrategy === "lot_splits",
