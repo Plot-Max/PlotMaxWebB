@@ -1272,9 +1272,7 @@ export default {
     confirmZoningFilter() {
       this.selectedZoningTypes = [...(this.dialogSelectedZoningTypes || [])];
       this.zoningDialogVisible = false;
-      if (this.selectedZoningTypes.length) {
-        this.searchProperties(false);
-      }
+      this.searchProperties(false);
     },
 
     // 应用筛选（Lot Size 已通过 v-model 绑定 filters，无需转换）
