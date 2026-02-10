@@ -393,9 +393,10 @@
                   v-loading="loading"
                   class="search-table"
                   height="720px"
+                  :header-cell-style="{ color: '#3b3b3b' }"
                 >
                   <!-- 地址列 -->
-                  <el-table-column
+                  <!-- <el-table-column
                     prop="address"
                     label="ADDRESS"
                     min-width="200"
@@ -419,7 +420,7 @@
                         />
                       </div>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                   <!-- Property：Address + 家庭类型 -->
                   <el-table-column
                     prop="property"
@@ -427,17 +428,18 @@
                     min-width="220"
                   >
                     <template slot-scope="scope">
-                      <span>{{ formatProperty(scope.row) }}</span>
+                      <div>{{ scope.row.show_address }}</div>
+                      <div style="color: #999;">{{ scope.row.use_desc }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column
+                  <!-- <el-table-column
                     prop="show_city"
                     label="TOWN"
                     min-width="90"
-                  ></el-table-column>
+                  ></el-table-column> -->
 
                   <!-- 临街面宽列 -->
-                  <el-table-column
+                  <!-- <el-table-column
                     prop="frontage"
                     label="FRONTAGE"
                     width="100"
@@ -453,7 +455,7 @@
                         ft
                       </span>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
                   <!-- 地块大小列 -->
                   <el-table-column
@@ -511,7 +513,7 @@
                   </el-table-column>
 
                   <!-- 可建设面积列 -->
-                  <el-table-column
+                  <!-- <el-table-column
                     prop="buildableSize"
                     label="BUILDABLE SIZE"
                     width="150"
@@ -526,9 +528,9 @@
                         }}
                       </span>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
-                  <el-table-column
+                  <!-- <el-table-column
                     prop="footprint_max_sqft"
                     label="Foot Print SIZE"
                     width="150"
@@ -543,8 +545,8 @@
                         }}
                       </span>
                     </template>
-                  </el-table-column>
-                  <el-table-column
+                  </el-table-column> -->
+                  <!-- <el-table-column
                     prop="gfa_sqft"
                     label="Maximum Gross Floor Area"
                     width="140"
@@ -557,7 +559,7 @@
                         }}
                       </span>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                   <!-- Flags：土地性质图标（湿地、洪水、古建筑等） -->
                   <el-table-column
                     prop="flags"
@@ -699,7 +701,7 @@
 
                   <!-- 操作列 -->
                   <el-table-column
-                    label="Actions"
+                    label="Action"
                     min-width="120"
                     align="center"
                   >
@@ -1139,12 +1141,12 @@ export default {
   },
   methods: {
     // Property 列：Address + 家庭类型（use_desc）
-    formatProperty(row) {
-      const addr = row.show_address || "";
-      const useDesc = row.use_desc || "";
-      if (!addr && !useDesc) return "—";
-      return [addr, useDesc].filter(Boolean).join(" ");
-    },
+    // formatProperty(row) {
+    //   const addr = row.show_address || "";
+    //   const useDesc = row.use_desc || "";
+    //   if (!addr && !useDesc) return "—";
+    //   return [addr, useDesc].filter(Boolean).join(" ");
+    // },
     // Utilization 进度条颜色：<40% 绿，40–60% 黄，>60% 红
     utilizationBarClass(val) {
       const n = Number(val);
