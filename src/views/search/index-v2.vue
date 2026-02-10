@@ -27,7 +27,7 @@
                 type="button"
                 class="overlay-btn"
                 :class="{ active: zoneOverlays.oppZones }"
-                @click="zoneOverlays.oppZones = !zoneOverlays.oppZones"
+                @click="handleOppZonesChange"
               >
                 <span class="overlay-checkbox">
                   <i v-if="zoneOverlays.oppZones" class="el-icon-check"></i>
@@ -1288,6 +1288,12 @@ export default {
       this.selectedTags = [];
     },
 
+    // Opp Zones 勾选：切换状态并触发搜索，勾选时传 in_opp = true
+    handleOppZonesChange() {
+      this.zoneOverlays.oppZones = !this.zoneOverlays.oppZones;
+      this.searchProperties(true);
+    },
+
     // 投资策略 tab 切换：更新选中项并重新请求列表（重置到第一页）
     handleStrategyChange(value) {
       if (this.investmentStrategy === value) return;
@@ -1334,6 +1340,7 @@ export default {
         no_envi_setback: this.filters.no_envi_setback || null,
         lot_split: this.investmentStrategy === "lot_splits",
         expansion_plays: this.investmentStrategy === "expansion_plays",
+        ...(this.zoneOverlays.oppZones ? { in_opp: true } : {}),
       })
         .then((res) => {
           this.loading = false;
