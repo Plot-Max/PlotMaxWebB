@@ -247,6 +247,13 @@
                           </template>
                       </el-table-column>
 
+                      <!-- GFA 列（紧接 Lot Size 后） -->
+                      <el-table-column prop="gfa_sqft" label="Maximum Gross Floor Area" width="140" align="center">
+                          <template slot-scope="scope">
+                              <span>{{ formatterArea((scope.row.gfa_sqft || 0).toFixed(0)) }}</span>
+                          </template>
+                      </el-table-column>
+
                       <!-- 可建设面积列 -->
                       <el-table-column prop="buildableSize" label="BUILDABLE SIZE" width="150" align="center">
                           <template slot-scope="scope">
@@ -257,11 +264,6 @@
                       <el-table-column prop="footprint_max_sqft" label="Foot Print SIZE" width="150" align="center">
                           <template slot-scope="scope">
                               <span>{{ formatterArea((scope.row.footprint_max_sqft || 0).toFixed(0)) }}</span>
-                          </template>
-                      </el-table-column>
-                      <el-table-column prop="gfa_sqft" label="Maximum Gross Floor Area" width="140" align="center">
-                          <template slot-scope="scope">
-                              <span>{{ formatterArea((scope.row.gfa_sqft || 0).toFixed(0)) }}</span>
                           </template>
                       </el-table-column>
                       <el-table-column prop="historical" label="HISTORICAL" width="105" align="center"></el-table-column>

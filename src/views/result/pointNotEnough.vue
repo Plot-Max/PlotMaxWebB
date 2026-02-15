@@ -110,7 +110,7 @@ export default {
         .title {
             font-size: 24px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1A1A1A;
             margin: 0 0 10px 0;
             line-height: 1.4;
         }
@@ -139,8 +139,8 @@ export default {
         }
 
         .direct-payment-btn {
-            background: #5A8DEE;
-            border-color: #5A8DEE;
+            background: #0B2E24;
+            border-color: #0B2E24;
 
             &:hover {
                 background: #4A7CE8;
@@ -149,14 +149,14 @@ export default {
         }
 
         .subscribe-btn {
-            background: #E2ECFF;
-            color: #5A8DEE;
-            border: 1px solid #E2ECFF;
+            background: #E7ECEA;
+            color: #0B2E24;
+            border: 1px solid #E7ECEA;
 
             &:hover {
-                background: #D1E0FF;
-                color: #5A8DEE;
-                border-color: #D1E0FF;
+                background: #A7F3D0;
+                color: #0B2E24;
+                border-color: #A7F3D0;
             }
         }
     }

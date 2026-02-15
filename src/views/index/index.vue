@@ -100,7 +100,7 @@ export default {
           (
             (this.subscriptionInfo.plan?.report_balance || 0) /
             this.subscriptionInfo.totalReportPointBalance
-          ).toFixed(2)
+          ).toFixed(2),
         ) * 100
       );
     },
@@ -110,7 +110,7 @@ export default {
           (
             (this.subscriptionInfo.plan?.search_balance || 0) /
             this.subscriptionInfo.totalSearchPointBalance
-          ).toFixed(2)
+          ).toFixed(2),
         ) * 100
       );
     },
@@ -170,7 +170,7 @@ export default {
     getPlanName(plan) {
       if (!plan) return null;
       const subscription = this.subscribes.find(
-        (item) => item.id === plan.plan_template_id
+        (item) => item.id === plan.plan_template_id,
       );
       return `${subscription?.name || "-"}<span class="plan-pay">${
         plan.plan_type == 0 ? "M" : "Y"
@@ -194,13 +194,14 @@ export default {
     .stats-col {
       .purchase-card-wrapper {
         .purchase-stats-card {
-          background: #5cba33; /* 与 element-theme 主题色一致 */
+          background: #b7cdb9; /* 与 element-theme 主题色一致 */
           border: none;
           height: 100%;
+          color: #132e30;
 
           // 重写ElementUI卡片内部样式
           ::v-deep .el-card__body {
-            color: white;
+            // color: white;
             text-align: left;
             display: flex;
             flex-direction: column;
@@ -211,14 +212,16 @@ export default {
 
             .card-header {
               .card-title {
-                color: white;
+                color: #427a60;
+                // color: white;
                 font-size: 16px;
                 margin-bottom: 4px;
               }
 
               .card-subtitle {
-                color: rgba(255, 255, 255, 0.9);
+                // color: rgba(255, 255, 255, 0.9);
                 font-size: 14px;
+                color: #427a60;
               }
             }
 

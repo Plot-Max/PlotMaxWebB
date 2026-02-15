@@ -106,8 +106,8 @@
               </div>
             </div>
 
-            <!-- Lot Size -->
-            <div class="filter-section">
+            <!-- Lot Size（用户自填，支持 sqft / acres 单位切换，后端仍收 sqft） -->
+            <div class="filter-section lot-size-section">
               <div class="section-header-row">
                 <h3 class="section-title">Lot Size</h3>
                 <div class="lot-size-unit-switcher">
@@ -132,47 +132,25 @@
                 </div>
               </div>
               <div class="range-inputs">
-                <el-select
-                  v-model="filters.lot_size_min"
-                  filterable
+                <el-input
+                  v-model.number="lotSizeMinDisplay"
+                  type="number"
+                  :placeholder="lotSizeUnit === 'acre' ? 'No Min' : 'No Min'"
                   clearable
-                  placeholder="No Min"
+                  :min="0"
                   :disabled="disableSearch"
                   class="range-input"
-                >
-                  <el-option label="No Min" :value="2"></el-option>
-                  <el-option
-                    v-for="item in lotSizeMinOptions.filter(
-                      (item) =>
-                        !filters.lot_size_max ||
-                        item.value < filters.lot_size_max
-                    )"
-                    :key="item.value"
-                    :label="lotSizeUnit === 'sqft' ? item.label2 : item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
+                />
                 <span class="range-separator">to</span>
-                <el-select
-                  v-model="filters.lot_size_max"
-                  filterable
+                <el-input
+                  v-model.number="lotSizeMaxDisplay"
+                  type="number"
+                  :placeholder="lotSizeUnit === 'acre' ? 'No Max' : 'No Max'"
                   clearable
-                  placeholder="No Max"
+                  :min="0"
                   :disabled="disableSearch"
                   class="range-input"
-                >
-                  <el-option label="No Max" :value="null"></el-option>
-                  <el-option
-                    v-for="item in lotSizeMinOptions.filter(
-                      (item) =>
-                        !filters.lot_size_min ||
-                        item.value > filters.lot_size_min
-                    )"
-                    :key="item.value"
-                    :label="lotSizeUnit === 'sqft' ? item.label2 : item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
+                />
               </div>
             </div>
 
@@ -471,44 +449,19 @@
                     </template>
                   </el-table-column>
 
-                  <!-- Utilization：built_utilization 进度条 -->
+                  <!-- GFA (SQFT) 列（紧接 Lot Size 后） -->
                   <el-table-column
-                    prop="built_utilization"
-                    label="Utilization"
-                    width="140"
+                    prop="gfa_sqft"
+                    label="GFA (SQFT)"
+                    width="120"
                     align="center"
                   >
                     <template slot-scope="scope">
-                      <div class="utilization-cell">
-                        <div
-                          class="utilization-bar-wrap"
-                          :class="
-                            utilizationBarClass(scope.row.built_utilization)
-                          "
-                        >
-                          <div
-                            class="utilization-bar"
-                            :style="{
-                              width:
-                                Math.min(
-                                  Math.max(
-                                    Number(scope.row.built_utilization) || 0,
-                                    0
-                                  ),
-                                  100
-                                ) + '%',
-                            }"
-                          ></div>
-                        </div>
-                        <span class="utilization-text">
-                          {{
-                            (scope.row.built_utilization != null
-                              ? Number(scope.row.built_utilization)
-                              : 0
-                            ).toFixed(0)
-                          }}%
-                        </span>
-                      </div>
+                      <span>
+                        {{
+                          formatterArea((scope.row.gfa_sqft || 0).toFixed(0))
+                        }}
+                      </span>
                     </template>
                   </el-table-column>
 
@@ -619,6 +572,48 @@
                       </div>
                     </template>
                   </el-table-column>
+
+                  <!-- Utilization：built_utilization 进度条（紧接 Flags 后） -->
+                  <el-table-column
+                    prop="built_utilization"
+                    label="Utilization"
+                    width="140"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <div class="utilization-cell">
+                        <div
+                          class="utilization-bar-wrap"
+                          :class="
+                            utilizationBarClass(scope.row.built_utilization)
+                          "
+                        >
+                          <div
+                            class="utilization-bar"
+                            :style="{
+                              width:
+                                Math.min(
+                                  Math.max(
+                                    Number(scope.row.built_utilization) || 0,
+                                    0
+                                  ),
+                                  100
+                                ) + '%',
+                            }"
+                          ></div>
+                        </div>
+                        <span class="utilization-text">
+                          {{
+                            (scope.row.built_utilization != null
+                              ? Number(scope.row.built_utilization)
+                              : 0
+                            ).toFixed(0)
+                          }}%
+                        </span>
+                      </div>
+                    </template>
+                  </el-table-column>
+
                   <!-- <el-table-column
                     prop="historical"
                     label="HISTORICAL"
@@ -673,22 +668,6 @@
                     </template>
                     <template slot-scope="scope">
                       <span>{{ formatZoning(scope.row) }}</span>
-                    </template>
-                  </el-table-column>
-
-                  <!-- GFA (SQFT) 列 -->
-                  <el-table-column
-                    prop="gfa_sqft"
-                    label="GFA (SQFT)"
-                    width="120"
-                    align="center"
-                  >
-                    <template slot-scope="scope">
-                      <span>
-                        {{
-                          formatterArea((scope.row.gfa_sqft || 0).toFixed(0))
-                        }}
-                      </span>
                     </template>
                   </el-table-column>
 
@@ -833,7 +812,7 @@ import SearchPagination from "@/components/SearchPagination.vue";
 
 function getInitialFilters() {
   return {
-    lot_size_min: 2,
+    lot_size_min: null,
     lot_size_max: null,
     frontage_min: null,
     frontage_max: null,
@@ -969,6 +948,37 @@ export default {
       return this.totalResults && this.totalResults > 0
         ? `${length} Result Points or $ ${halfLength} for Recharge and unlock Address`
         : "Recharge and unlock";
+    },
+    // Lot Size 输入框显示值：按当前单位在 sqft / acre 间转换，内部与接口仍为 sqft
+    lotSizeMinDisplay: {
+      get() {
+        const v = this.filters.lot_size_min;
+        if (v == null || v === "") return null;
+        return this.lotSizeUnit === "acre" ? Number(v) / 43560 : Number(v);
+      },
+      set(val) {
+        if (val == null || val === "") {
+          this.filters.lot_size_min = null;
+          return;
+        }
+        const num = Number(val);
+        this.filters.lot_size_min = this.lotSizeUnit === "acre" ? num * 43560 : num;
+      },
+    },
+    lotSizeMaxDisplay: {
+      get() {
+        const v = this.filters.lot_size_max;
+        if (v == null || v === "") return null;
+        return this.lotSizeUnit === "acre" ? Number(v) / 43560 : Number(v);
+      },
+      set(val) {
+        if (val == null || val === "") {
+          this.filters.lot_size_max = null;
+          return;
+        }
+        const num = Number(val);
+        this.filters.lot_size_max = this.lotSizeUnit === "acre" ? num * 43560 : num;
+      },
     },
   },
   data() {
@@ -1646,6 +1656,19 @@ export default {
   }
 }
 
+/* Lot Size 数字输入框隐藏 +1/-1 步进控件 */
+.lot-size-section .range-input ::v-deep input[type="number"] {
+  -moz-appearance: textfield;
+
+  padding-right: 15px;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 /* Lot Size 单位切换：参考图样式，选中项白底圆角框+深色字，未选中灰色字 */
 .lot-size-unit-switcher {
   display: inline-flex;
@@ -1842,11 +1865,11 @@ export default {
 /* 表格样式 */
 .search-table {
   ::v-deep .el-table__header {
-    background-color: #f8f9fa;
+    background-color: #F7F7F5;
 
     th {
-      background-color: #f8f9fa !important;
-      color: #909399;
+      background-color: #F7F7F5 !important;
+      color: #717182;
       font-weight: 600;
       font-size: 12px;
       text-transform: uppercase;
@@ -1858,7 +1881,7 @@ export default {
 
   ::v-deep .el-table__row {
     &:hover {
-      background-color: #f8f9fa;
+      background-color: #F7F7F5;
     }
   }
 
@@ -1912,7 +1935,7 @@ export default {
 }
 .utilization-text {
   font-size: 12px;
-  color: #606266;
+  color: #717182;
 }
 
 /* Flags 土地性质图标（使用 assets 图标） */
@@ -1947,7 +1970,7 @@ export default {
 .search-table ::v-deep .column-filter-funnel {
   display: inline-flex;
   align-items: center;
-  color: #909399;
+  color: #717182;
 }
 .search-table ::v-deep .column-filter-funnel-wrap:hover .column-filter-funnel {
   color: #5a8dee;
@@ -1977,11 +2000,11 @@ export default {
 .zoning-dialog-title {
   font-size: 18px;
   font-weight: 600;
-  color: #303133;
+  color: #1A1A1A;
 }
 .zoning-dialog-subtitle {
   font-size: 13px;
-  color: #909399;
+  color: #717182;
   margin-top: 4px;
 }
 .zoning-dialog-body {
@@ -2014,12 +2037,12 @@ export default {
 .zoning-group-location {
   font-size: 14px;
   font-weight: 500;
-  color: #303133;
+  color: #1A1A1A;
 }
 .zoning-group-selected {
   margin-left: auto;
   font-size: 12px;
-  color: #909399;
+  color: #717182;
 }
 .zoning-group-buttons {
   display: flex;
@@ -2031,7 +2054,7 @@ export default {
   font-size: 13px;
   border-radius: 6px;
   /* border: 1px solid #67c23a; */
-  color: #606266;
+  color: #717182;
   background: #fff;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
@@ -2111,7 +2134,7 @@ export default {
 }
 
 .search-table .address-text {
-  color: #606266;
+  color: #717182;
 }
 
 /* 操作列按钮：参考 apply filter，更小尺寸 + 默认透明，悬停显示背景 */
@@ -2191,7 +2214,7 @@ export default {
 .bar-section-title {
   font-size: 11px;
   font-weight: 600;
-  color: #909399;
+  color: #717182;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0 0 10px 0;
@@ -2212,7 +2235,7 @@ export default {
   padding: 8px 4px;
   margin: 0 4px 0 0;
   font-size: 14px;
-  color: #909399;
+  color: #717182;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -2221,7 +2244,7 @@ export default {
 }
 
 .strategy-tab:hover {
-  color: #606266;
+  color: #717182;
 }
 
 .strategy-tab.active {
@@ -2248,7 +2271,7 @@ export default {
   gap: 8px;
   padding: 8px 14px;
   font-size: 14px;
-  color: #606266;
+  color: #717182;
   background: #fff;
   border: 1px solid #dcdfe6;
   border-radius: 6px;
@@ -2284,7 +2307,7 @@ export default {
 
 .overlay-icon {
   display: inline-flex;
-  color: #606266;
+  color: #717182;
 }
 
 .overlay-label {

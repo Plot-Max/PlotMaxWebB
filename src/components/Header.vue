@@ -73,7 +73,7 @@
             <div class="user-dropdown-trigger">
               <el-avatar
                 :size="40"
-                background-color="#4a90e2"
+                background-color="#0B2E24"
                 color="#fff"
                 :src="userInfo?.logo"
               >
@@ -210,7 +210,6 @@ export default {
 .header {
   background: #fff;
   border-bottom: 1px solid #e9ecef;
-  padding: 12px 0;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -230,12 +229,12 @@ export default {
       align-items: center;
       font-size: 18px;
       font-weight: bold;
-      color: #4a90e2;
+      color: #0B2E24;
       gap: 12px;
       cursor: pointer;
 
       .logo-image {
-        height: 40px;
+        height: 75px;
         width: auto;
         object-fit: contain;
       }

@@ -382,10 +382,10 @@ $account-primary-disabled: lighten($--color-primary, 35%);
   // ElementUI 表格样式覆盖
   ::v-deep .el-table {
     .el-table__header {
-      background-color: #f8f9fa;
+      background-color: #F7F7F5;
 
       th {
-        background-color: #f8f9fa !important;
+        background-color: #F7F7F5 !important;
         color: $account-primary;
         font-weight: 600;
         border-bottom: 2px solid #e9ecef;
