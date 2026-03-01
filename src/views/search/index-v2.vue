@@ -1503,8 +1503,10 @@ export default {
   background: white;
 
   .filter-tag {
-    background-color: #c8e6c9;
-    color: #2e7d32;
+    // background-color: #c8e6c9;
+    background-color: #cefef6;
+    // color: #2e7d32;
+    color: #1A1A1A;
     border: none;
     border-radius: 16px;
     font-size: 13px;
@@ -1715,6 +1717,7 @@ export default {
   .utilization-slider {
     ::v-deep .el-slider__runway {
       background-color: #2e7d32;
+      background-color: #0B2124;
       height: 6px;
     }
 
@@ -1765,9 +1768,11 @@ export default {
 
   .reset-btn {
     flex-shrink: 0;
-    background-color: transparent;
-    border-color: #e0e0e0;
-    color: #555;
+    // background-color: ;
+    background-color: #e7ecea;
+    // border-color: #e0e0e0;
+    border: none;
+    color: #0b2e24;
     font-weight: 500;
     font-size: 14px;
 
@@ -1787,8 +1792,8 @@ export default {
   .apply-btn {
     flex: 1;
     margin-left: 0;
-    background-color: #1a1a1a;
-    border-color: #1a1a1a;
+    background-color: #0B2124;
+    border-color: #0B2124;
     color: white;
     font-weight: 600;
     font-size: 14px;
@@ -2062,17 +2067,17 @@ export default {
   outline: none;
   border: none;
   border: 2px solid #efefef;
-  color: #000;
+  color: #1a1a1a;
   padding: 12px 25px;
 }
 .zoning-btn:hover {
-  border-color: #85ce61;
-  color: #67c23a;
+  border-color: #10b981;
+  color: #10b981;
 }
 .zoning-btn--active {
-  background: #e1f3d8;
-  border-color: #67c23a;
-  color: #67c23a;
+  background: #f0fdf4;
+  border-color: #10b981;
+  color: #10b981;
 }
 .zoning-dialog-footer {
   display: flex;
@@ -2250,7 +2255,8 @@ export default {
 .strategy-tab.active {
   color: #2c3e50;
   font-weight: 700;
-  border-bottom: 4px solid #67c23a;
+  // border-bottom: 4px solid #67c23a;
+  border-bottom: 4px solid #007855;
 }
 
 .overlays-section {
@@ -2274,7 +2280,8 @@ export default {
   color: #717182;
   background: #fff;
   border: 1px solid #dcdfe6;
-  border-radius: 6px;
+  // border-radius: 6px;
+  border-radius: 100px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
 }
@@ -2284,7 +2291,8 @@ export default {
 }
 
 .overlay-btn.active {
-  border-color: #67c23a;
+  // border-color: #67c23a;
+  border-color: #10B981;
   background: #f0f9eb;
 }
 
@@ -2297,11 +2305,13 @@ export default {
   border: 1px solid #dcdfe6;
   border-radius: 3px;
   font-size: 12px;
-  color: #67c23a;
+  // color: #67c23a;
+  color: #10B981;
+  // background-color: #10B981;
 }
 
 .overlay-btn.active .overlay-checkbox {
-  border-color: #67c23a;
+  border-color: #10B981;
   background: #fff;
 }
 
@@ -2311,6 +2321,7 @@ export default {
 }
 
 .overlay-label {
+  color: #1A1A1A;
   white-space: nowrap;
 }
 /* 响应式调整 */

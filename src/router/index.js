@@ -14,6 +14,7 @@ const routes = [
         path: '/',
         name: 'Index',
         component: () => import('../views/index/index.vue'),
+        //
       },
       {
         path: '/account',

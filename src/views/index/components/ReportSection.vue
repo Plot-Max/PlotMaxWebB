@@ -2,9 +2,9 @@
   <el-card class="report-section" shadow="hover">
     <div class="section-header">
       <h3 class="section-title">{{ title }} <span class="count">({{ totalCount || reports.length }})</span></h3>
-      <el-button 
-        v-if="showViewAll" 
-        type="text" 
+      <el-button
+        v-if="showViewAll"
+        type="text"
         class="view-all-btn"
         @click="handleViewAll"
       >
@@ -12,8 +12,8 @@
       </el-button>
     </div>
     <div class="report-list">
-      <div 
-        v-for="(report, index) in reports" 
+      <div
+        v-for="(report, index) in reports"
         :key="index"
         class="report-item"
       >
@@ -21,7 +21,8 @@
           <span class="report-text">{{ report.address }}</span>
         </div>
         <div class="report-icon"  @click="downloadReport(report.pdf_url)">
-          <img v-if="report.state==4" src="@/assets/index/document.png" alt="Report Image" class="report-image">
+          <!-- <img v-if="report.state==4" src="@/assets/index/document.png" alt="Report Image" class="report-image"> -->
+          <img v-if="report.state==4" src="@/assets/icons/newicon-2026/report.png" alt="Report Image" class="report-image">
           <img v-else src="@/assets/index/document_grey.png" alt="Report Image" class="report-image">
         </div>
       </div>
@@ -85,7 +86,8 @@ export default {
     }
 
     .view-all-btn {
-      color: #5cba33;
+      color: #007855;
+      font-size: 14px;
     }
   }
 

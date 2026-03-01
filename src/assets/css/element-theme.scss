@@ -6,11 +6,37 @@
  * 这样 common/var.scss 中的 !default 不会覆盖我们的值。
  */
 
-/* 覆盖主题色 - Primary */
-$--color-primary: #5cba33;
+/* 按钮颜色变量 - 来自设计稿 */
+$btn-bg-primary: #0e2921; /* 主按钮背景 - 深绿色 */
+$btn-bg-primary-hover: #08231b;
+$btn-text-primary: #fff; /* 主按钮文字 */
 
+$btn-bg-secondary: #e7ecea; /* 次按钮背景 - 浅灰色 */
+$btn-text-secondary: #0b2124; /* 次按钮文字 */
+
+/* 覆盖主题色 - Primary */
+$--color-primary: #0e2921;
 /* 字体路径：指向已编译的 theme-chalk 字体，避免 404 */
 $--font-path: "~element-ui/lib/theme-chalk/fonts";
+
+/* Element 按钮覆盖 */
+body .el-button {
+  &.el-button--primary {
+    background-color: $btn-bg-primary;
+    color: $btn-text-primary;
+    border: none;
+
+    &:hover {
+      background-color: $btn-bg-primary-hover;
+    }
+  }
+
+  &.el-button--info {
+    background-color: $btn-bg-secondary;
+    color: $btn-text-secondary;
+    border: none;
+  }
+}
 
 /* 引入 Element UI theme-chalk 源码（会使用上面定义的变量） */
 @import "~element-ui/packages/theme-chalk/src/index.scss";

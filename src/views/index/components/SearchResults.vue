@@ -89,7 +89,8 @@ export default {
     }
 
     .view-all-btn {
-      color: #5cba33;
+      color: #007855;
+      font-size: 14px;
     }
   }
 

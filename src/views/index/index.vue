@@ -194,10 +194,10 @@ export default {
     .stats-col {
       .purchase-card-wrapper {
         .purchase-stats-card {
-          background: #b7cdb9; /* 与 element-theme 主题色一致 */
+          background: #0e2921; /* 主按钮背景 - 深绿色 */
           border: none;
           height: 100%;
-          color: #132e30;
+          color: #fff;
 
           // 重写ElementUI卡片内部样式
           ::v-deep .el-card__body {
@@ -212,7 +212,7 @@ export default {
 
             .card-header {
               .card-title {
-                color: #427a60;
+                color: #fff;
                 // color: white;
                 font-size: 16px;
                 margin-bottom: 4px;
@@ -221,7 +221,7 @@ export default {
               .card-subtitle {
                 // color: rgba(255, 255, 255, 0.9);
                 font-size: 14px;
-                color: #427a60;
+                color: #fff;
               }
             }
 
@@ -257,7 +257,7 @@ export default {
 }
 
 ::v-deep .plan-pay {
-  background: #5cba33; /* 与 element-theme 主题色一致 */
+  background: #007855; /* 与 element-theme 主题色一致 */
   box-shadow: 0px 2px 4px 0px rgba(92, 186, 51, 0.4);
   border-radius: 4px;
   color: #ffffff;

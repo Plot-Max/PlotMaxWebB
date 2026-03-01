@@ -18,7 +18,7 @@
           :percentage="progressPercentage || 0"
           :show-text="false"
           :stroke-width="6"
-          color="#5cba33"
+          color="#0e2921"
           class="progress-bar"
         />
         <p class="card-description" v-if="description">{{ description }}</p>
@@ -85,17 +85,20 @@ export default {
 
     .card-subtitle {
       font-size: 14px;
-      color: #5cba33;
+      color: #007855;
       margin: 0;
       font-weight: 500;
     }
   }
 
   .card-content {
+    ::v-deep .el-statistic {
+      color: #007855 !important;
+    }
     ::v-deep .el-statistic .con {
       font-size: 20px;
       font-weight: bold;
-      color: #5cba33;
+      color: #5cba33;color: #007855 !important;
       margin-bottom: 12px;
       text-align: left;
       justify-content: flex-start;

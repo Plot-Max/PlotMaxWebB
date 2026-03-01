@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-    <div class="header-content">
+    <div class="header-content" :class="$route.path === '/search' ? 'w-1360' : ''">
       <!-- Logo and Brand -->
       <div class="logo-section">
         <div class="logo" @click="$router.push('/')">
@@ -36,6 +36,7 @@
         <el-button
           type="primary"
           size="medium"
+          class="custom-button primary"
           @click="
             $router.push({ path: '/choose-service', query: selectedAddress })
           "
@@ -43,7 +44,12 @@
         >
           Purchase Report
         </el-button>
-        <el-button type="info" size="medium" @click="toSearchPage">
+        <el-button
+          class="custom-button info"
+          type="info"
+          size="medium"
+          @click="toSearchPage"
+        >
           Advanced Search
         </el-button>
       </div>
@@ -57,8 +63,13 @@
             size="medium"
             @click="toSubsribePage"
           >
-            <img
+            <!-- <img
               src="@/assets/header/alert.png"
+              alt="Alert"
+              class="icon-image"
+            /> -->
+            <img
+              src="@/assets/icons/newicon-2026/dingyue.png"
               alt="Alert"
               class="icon-image"
             />
@@ -213,6 +224,7 @@ export default {
   position: sticky;
   top: 0;
   z-index: 1000;
+
   .header-content {
     max-width: 1200px;
     margin: 0 auto;
@@ -221,6 +233,11 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
+
+    &.w-1360{
+      max-width: 1360px;
+      padding: 0;
+    }
   }
 
   .logo-section {
@@ -229,7 +246,7 @@ export default {
       align-items: center;
       font-size: 18px;
       font-weight: bold;
-      color: #0B2E24;
+      color: #0b2e24;
       gap: 12px;
       cursor: pointer;
 
@@ -319,7 +336,7 @@ export default {
 
           .user-role {
             font-size: 12px;
-            color: #666;
+            color: #007855;
           }
         }
       }
