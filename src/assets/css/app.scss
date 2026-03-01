@@ -1,0 +1,6 @@
+/**
+ * 应用层样式入口（与 element-theme 分开，降低单次 SCSS 编译体积，避免 OOM）
+ * 仅包含：全局变量 + 通用样式
+ */
+@import "./variables.scss";
+@import "./common.scss";
