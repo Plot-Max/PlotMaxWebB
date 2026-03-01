@@ -14,7 +14,7 @@ const routes = [
         path: '/',
         name: 'Index',
         component: () => import('../views/index/index.vue'),
-        //
+        // 已调色
       },
       {
         path: '/account',
@@ -47,6 +47,7 @@ const routes = [
         meta: {
           title: 'Zoning Search',
         },
+        // 已调色
       },
       {
         path: '/search/result',
