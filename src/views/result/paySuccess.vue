@@ -24,7 +24,7 @@
                 <div class="bold title">If you have purchased the premium version of the report</div>
                 <div class="right-desc">please contact us via email to schedule a communication method and time.</div>
                 <a href="mailto:info@plot-max.com">info@plot-max.com</a>
-                <el-link :underline="false" type="primary" @click="$router.push('/report')">Go to the report page</el-link>
+                <el-link :underline="true" type="primary" @click="$router.push('/report')">Go to the report page</el-link>
             </div>
         </el-col>
     </el-row>
