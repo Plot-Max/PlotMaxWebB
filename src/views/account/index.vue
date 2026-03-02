@@ -6,13 +6,11 @@
 
     <!-- 搜索区域 -->
     <div class="search-section">
-      <el-input
+      <SearchInput
         v-model="searchKeyword"
         placeholder="Search Account"
-        prefix-icon="el-icon-search"
-        class="search-input"
-        @keyup.enter="handleSearch"
         clearable
+        @keyup.enter="handleSearch"
       />
       <el-button type="primary" class="search-btn" @click="handleSearch">
         Search
@@ -28,60 +26,48 @@
     </div>
 
     <!-- 表格区域 -->
-    <div class="table-section">
-      <el-table
-        :data="tableData"
-        v-loading="loading"
-        style="width: 100%"
-        row-key="id"
-      >
-        <el-table-column prop="userEmail" label="Account/Email" width="250">
-          <template slot-scope="scope">
-            <span class="email-text">{{ scope.row.userEmail }}</span>
-          </template>
-        </el-table-column>
+    <DataTable
+      :data="tableData"
+      :loading="loading"
+      :columns="tableColumns"
+      :show-pagination="false"
+    >
+      <!-- Account/Email列 -->
+      <template v-slot:userEmail="{ row }">
+        <span class="email-text">{{ row.userEmail }}</span>
+      </template>
 
-        <el-table-column prop="createdAt" label="Created Time" align="center">
-          <template slot-scope="scope">
-            <span>{{ formatDate(scope.row.create_at) }}</span>
-          </template>
-        </el-table-column>
-        <!-- <el-table-column prop="status" label="State"></el-table-column> -->
+      <!-- Created Time列 -->
+      <template v-slot:createdAt="{ row }">
+        <span>{{ formatDate(row.create_at) }}</span>
+      </template>
 
-        <el-table-column
-          prop="lastLogin"
-          label="Last active Time"
-          align="center"
+      <!-- Last active Time列 -->
+      <template v-slot:lastLogin="{ row }">
+        <span>{{ formatDate(row.active_time) }}</span>
+      </template>
+
+      <!-- OPERATE列 -->
+      <template v-slot:operate="{ row }">
+        <BasicButton
+          type="text"
+          size="small"
+          class="operate-btn"
+          @click="handleEdit(row)"
         >
-          <template slot-scope="scope">
-            <span>{{ formatDate(scope.row.active_time) }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="OPERATE"
-          width="150"
-          align="center"
-          fixed="right"
-          v-if="userInfo?.user_role == 0"
+          Edit
+        </BasicButton>
+        <BasicButton
+          type="text"
+          size="small"
+          class="operate-btn margin-l10"
+          @click="handleDelete(row)"
+          v-if="row.user_role == 1"
         >
-          <template slot-scope="scope">
-            <el-link type="primary" size="mini" @click="handleEdit(scope.row)">
-              Edit
-            </el-link>
-            <el-link
-              type="primary"
-              size="mini"
-              class="margin-l10"
-              @click="handleDelete(scope.row)"
-              v-if="scope.row.user_role == 1"
-            >
-              Delete
-            </el-link>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+          Delete
+        </BasicButton>
+      </template>
+    </DataTable>
 
     <!-- 添加/编辑对话框 -->
     <el-dialog
@@ -137,10 +123,18 @@ import {
   rePassword,
   deleteGroupUser,
 } from "@/apis";
+import SearchInput from "@/components/newui-202603/SearchInput.vue";
+import BasicButton from "@/components/newui-202603/BasicButton.vue";
+import DataTable from "@/components/newui-202603/DataTable.vue";
 import MapStateMixins from "../mixins/MapStateMixins";
 export default {
   name: "AccountManagement",
   mixins: [MapStateMixins],
+  components: {
+    SearchInput,
+    BasicButton,
+    DataTable,
+  },
   data() {
     return {
       // 搜索关键词
@@ -149,6 +143,19 @@ export default {
       // 表格数据
       tableData: [],
       loading: false,
+
+      // 表格列配置
+      tableColumns() {
+        const columns = [
+          { prop: "userEmail", label: "Account/Email", width: 250, slot: "userEmail" },
+          { prop: "createdAt", label: "Created Time", align: "center", slot: "createdAt" },
+          { prop: "lastLogin", label: "Last active Time", align: "center", slot: "lastLogin" },
+        ];
+        if (this.userInfo?.user_role == 0) {
+          columns.push({ prop: "operate", label: "OPERATE", width: 200, align: "center", fixed: "right", slot: "operate" });
+        }
+        return columns;
+      },
 
       // 分页相关
       currentPage: 1,
@@ -333,22 +340,23 @@ $account-primary-disabled: lighten($--color-primary, 35%);
       font-weight: 600;
       margin: 0;
       padding:20px 0 0 ;
-      
+
     }
   }
 
   .search-section {
     display: flex;
     align-items: center;
-    gap: 12px;
+    // gap: 12px;
     margin-bottom: 20px;
-    padding: 20px;
+    // padding: 20px;
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    // border-radius: 8px;
+    // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     .search-input {
       width: 300px;
+      margin-right: 12px;
     }
 
     .search-btn {
@@ -360,43 +368,10 @@ $account-primary-disabled: lighten($--color-primary, 35%);
     }
   }
 
-  .table-section {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-
-    .email-text {
-      color: $account-primary;
-      font-weight: 500;
-    }
-
-    .pagination-section {
-      padding: 20px;
-      display: flex;
-      justify-content: flex-end;
-      border-top: 1px solid #ebeef5;
-    }
-  }
-
-  // ElementUI 表格样式覆盖
-  ::v-deep .el-table {
-    .el-table__header {
-      background-color: #F7F7F5;
-
-      th {
-        background-color: #F7F7F5 !important;
-        color: $account-primary;
-        font-weight: 600;
-        border-bottom: 2px solid #e9ecef;
-      }
-    }
-
-    .el-table__row {
-      &:hover {
-        background-color: rgba($account-primary, 0.05);
-      }
-    }
+  // 特有的 email-text 样式
+  ::v-deep .email-text {
+    color: $account-primary;
+    font-weight: 500;
   }
 
   // 对话框样式

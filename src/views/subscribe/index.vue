@@ -132,10 +132,10 @@
                         <p>2 report points = 1 premium report</p>
                     </div>
                     <div class="quantity-control">
-                        <img src="@/assets/icons/minus.png" class="quantity-btn" @click="decreaseReportPoint" />
+                        <img src="@/assets/icons/newicon-2026/minus.png" class="quantity-btn" @click="decreaseReportPoint" />
                         <input type="number" v-model.number="reportPointQuantity" class="quantity-input" min="1"
                             @input="validateReportPoint" @blur="validateReportPoint" />
-                        <img src="@/assets/icons/plus.png" class="quantity-btn" @click="increaseReportPoint" />
+                        <img src="@/assets/icons/newicon-2026/plus.png" class="quantity-btn" @click="increaseReportPoint" />
                     </div>
                     <div class="total-price">Total $ {{ (reportPointQuantity * 49.99).toFixed(2) }}</div>
                     <button class="get-btn" @click="doPayPack(reportPointQuantity, 0)">GET IT</button>
@@ -154,11 +154,11 @@
                         <p>2 report points = 1 premium report</p>
                     </div>
                     <div class="quantity-control">
-                        <img src="@/assets/icons/minus.png" class="quantity-btn"
+                        <img src="@/assets/icons/newicon-2026/minus.png" class="quantity-btn"
                             @click="resultQuantity > 1 ? resultQuantity-- : undefined" />
                         <input type="number" v-model.number="resultQuantity" class="quantity-input" min="1"
                             @input="validateResult" @blur="validateResult" />
-                        <img src="@/assets/icons/plus.png" class="quantity-btn" @click="resultQuantity++" />
+                        <img src="@/assets/icons/newicon-2026/plus.png" class="quantity-btn" @click="resultQuantity++" />
                     </div>
                     <div class="total-price">Total $ {{ (resultQuantity * 0.5).toFixed(2) }}</div>
                     <button class="get-btn" @click="doPayPack(0, resultQuantity)">GET IT</button>
@@ -362,7 +362,7 @@ export default {
 .package-name {
     font-size: 20px;
     font-weight: 600;
-    color: #4a90e2;
+    color: #007855;
     margin: 0 0 12px 0;
 }
 
@@ -409,9 +409,11 @@ export default {
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
+    background: #e7ecea;
+    color: #333;
 
     &.active {
-        background: linear-gradient(135deg, #4a90e2, #357abd);
+        background: #0e2921;
         color: white;
 
         .pricing-label {
@@ -424,15 +426,12 @@ export default {
     }
 
     &:not(.active) {
-        background: #2ecc71;
-        color: white;
-
         .pricing-label {
-            color: white;
+            color: #333;
         }
 
         .pricing-value {
-            color: white;
+            color: #333;
         }
     }
 }
@@ -489,7 +488,7 @@ export default {
 .separate-name {
     font-size: 22px;
     font-weight: 600;
-    color: #4a90e2;
+    color: #007855;
     margin: 0 0 12px 0;
 }
 
@@ -619,7 +618,7 @@ export default {
 .get-btn {
     width: 100%;
     padding: 12px 24px;
-    background: linear-gradient(135deg, #4a90e2, #357abd);
+    background: #0e2921;
     color: white;
     border: none;
     border-bottom-left-radius: 8px;
@@ -630,7 +629,7 @@ export default {
     transition: all 0.2s ease;
 
     &:hover {
-        background: linear-gradient(135deg, #357abd, #2d6aa0);
+        background: #0a1f18;
         transform: translateY(-1px);
     }
 }

@@ -1,6 +1,7 @@
 <template>
-    <el-row :gutter="50" class="page" style="margin: 0px auto;">
-        <el-col :sm="11" :xs="24" class="left">
+    <div class="page-container">
+        <el-row :gutter="50" class="page" style="width: 100%; margin: 0px;">
+            <el-col :sm="11" :xs="24" class="left">
             <div class="bold title">What to Expect</div>
             <div>
                 <p>1. You'll receive a confirmation email shortly.</p>
@@ -13,7 +14,7 @@
         </el-col>
         <el-col :sm="13" :xs="24" class="right">
             <div style="display: flex;align-items: center;gap: 10px;">
-                <img src="@/assets/icons/pay_success.png" width="70px" class="pay-success"/>
+                <img src="@/assets/icons/newicon-2026/Successful.png" class="pay-success"/>
                 <span v-if="$route.query.type == 0" class="bold">This consumption：1 report points/ $49.99</span>
                 <span v-else class="bold">This consumption：2 report points/ $99.99</span>
             </div>
@@ -27,12 +28,13 @@
             </div>
         </el-col>
     </el-row>
+    </div>
 </template>
 
 <script>
 export default {
     components: {
-        
+
     },
     data() {
         return {
@@ -63,27 +65,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.page-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
 .page {
-    font-size: 16px;
+    font-size: 20px;
     margin-top: 40px;
-    line-height: 24px;
+    line-height: 32px;
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
     margin: 0px;
-    max-width: 1000px;
+    max-width: 1200px;
+    a {
+        color: #007855;
+    }
 }
 .bold {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
 }
 .title {
-    line-height: 25px;
+    line-height: 34px;
     padding: 20px 0px;
 }
 .right-desc {
     width: 400px;
     max-width: 100%;
+    font-size: 20px;
 }
 
 .right {
@@ -92,13 +103,6 @@ export default {
     padding-top: 20px;
     .right-content {
         width: 100%;max-width: 300px;
-        a {
-            color: #409eff;
-            text-decoration: none;
-            display: block;
-            line-height: 20px;
-            margin: 10px 0px;
-        }
     }
     @media (min-width: 768px) {
         border-top: none;;
@@ -106,5 +110,12 @@ export default {
         padding-top: 0px;
         margin-top: 0px;
     }
+}
+::v-deep .el-link {
+    color: #007855 !important;
+    font-size: 20px !important;
+}
+.pay-success {
+    width: 90px;
 }
 </style>

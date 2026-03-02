@@ -5,7 +5,7 @@
             <div class="content-wrapper">
                 <!-- 图标 -->
                 <div class="icon-section">
-                    <img src="@/assets/icons/point_not_enough.png" alt="Point Not Enough" class="point-icon" />
+                    <img src="@/assets/icons/newicon-2026/Insufficient balance.png" alt="Insufficient balance" class="point-icon" />
                 </div>
 
                 <!-- 文字信息 -->

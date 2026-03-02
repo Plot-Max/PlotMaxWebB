@@ -808,7 +808,7 @@
 
 <script>
 import { searchComplex, buySearch, searchCity } from "@/apis";
-import SearchPagination from "@/components/SearchPagination.vue";
+import SearchPagination from "@/components/newui-202603/SearchPagination.vue";
 
 function getInitialFilters() {
   return {

@@ -34,12 +34,12 @@
                             <span class="supplement-type">Report</span>
                             <div class="supplement-controls">
                                 <button class="quantity-btn" @click="decreaseReport">
-                                    <img src="@/assets/icons/minus.png" alt="minus" />
+                                    <img src="@/assets/icons/newicon-2026/minus.png" alt="minus" />
                                 </button>
                                 <input type="number" v-model.number="reportQuantity" class="quantity-input" :min="0"
                                     @input="validateReport" @blur="validateReport" />
                                 <button class="quantity-btn" @click="increaseReport">
-                                    <img src="@/assets/icons/plus.png" alt="plus" />
+                                    <img src="@/assets/icons/newicon-2026/plus.png" alt="plus" />
                                 </button>
                             </div>
                             <span class="supplement-price">$49.99/per</span>
@@ -51,12 +51,12 @@
                             <span class="supplement-type">Search</span>
                             <div class="supplement-controls">
                                 <button class="quantity-btn" @click="decreaseSearch">
-                                    <img src="@/assets/icons/minus.png" alt="minus" />
+                                    <img src="@/assets/icons/newicon-2026/minus.png" alt="minus" />
                                 </button>
                                 <input type="number" v-model.number="searchQuantity" class="quantity-input" :min="0"
                                     @input="validateSearch" @blur="validateSearch" />
                                 <button class="quantity-btn" @click="increaseSearch">
-                                    <img src="@/assets/icons/plus.png" alt="plus" />
+                                    <img src="@/assets/icons/newicon-2026/plus.png" alt="plus" />
                                 </button>
                             </div>
                             <span class="supplement-price">$0.5/per</span>
@@ -68,7 +68,7 @@
                             <div>$ {{ totalPrice.toFixed(2) }}</div>
                         </div>
                     </div>
-                    
+
 
                     <el-button :loading="paying" class="pay-btn" @click="toPay" :disabled="totalPrice <= 0">PAY</el-button>
                 </div>
@@ -95,20 +95,12 @@
                 </div>
                 <div class="details-section">
                     <span class="details-toggle">details</span>
-                    <div class="details-table">
-                        <div class="table-header">
-                            <span>Quantity</span>
-                            <span>Valid to</span>
-                        </div>
-                        <div class="table-row">
-                            <span>{{ subscriptionInfo.plan?.report_balance || '-' }}</span>
-                            <span>{{ formatDate(subscriptionInfo.plan?.end_day) }}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>{{ subscriptionInfo.totalReportPointBalance -  (subscriptionInfo.plan?.report_balance || 0) }}</span>
-                            <span>-</span>
-                        </div>
-                    </div>
+                    <DataTable
+                        :data="reportDetailsData"
+                        :columns="reportDetailsColumns"
+                        :show-pagination="false"
+                        size="mini"
+                    />
                 </div>
             </div>
 
@@ -130,20 +122,12 @@
                 </div>
                 <div class="details-section">
                     <span class="details-toggle">details</span>
-                    <div class="details-table">
-                        <div class="table-header">
-                            <span>Quantity</span>
-                            <span>Valid to</span>
-                        </div>
-                        <div class="table-row">
-                            <span>{{ subscriptionInfo.plan?.search_balance || '-' }}</span>
-                            <span>{{ formatDate(subscriptionInfo.plan?.end_day) }}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>{{ subscriptionInfo.totalSearchPointBalance -  (subscriptionInfo.plan?.search_balance || 0) }}</span>
-                            <span>-</span>
-                        </div>
-                    </div>
+                    <DataTable
+                        :data="searchDetailsData"
+                        :columns="searchDetailsColumns"
+                        :show-pagination="false"
+                        size="mini"
+                    />
                 </div>
             </div>
         </div>
@@ -154,9 +138,11 @@
 import { subscribeDetail, mockBuyExtra, payPack, unsubscribe } from '@/apis';
 import { subscribes } from '@/utils/enums'
 import MapStateMixins from '../mixins/MapStateMixins';
+import DataTable from '@/components/newui-202603/DataTable.vue';
 export default {
     name: 'Wallet',
     mixins: [MapStateMixins],
+    components: { DataTable },
     data() {
         return {
             subscribes,
@@ -200,6 +186,34 @@ export default {
         resultExtraPurchasedPercentage() {
             const searchBalance = this.subscriptionInfo.totalSearchPointBalance - (this.subscriptionInfo.plan?.search_balance || 0)
             return searchBalance == 0 ? 0 : (100 - this.resultWithinPackagePercentage)
+        },
+        reportDetailsData() {
+            const planBalance = this.subscriptionInfo.plan?.report_balance || 0;
+            const extraBalance = this.subscriptionInfo.totalReportPointBalance - planBalance;
+            return [
+                { quantity: planBalance, validTo: this.formatDate(this.subscriptionInfo.plan?.end_day) },
+                { quantity: extraBalance, validTo: '-' }
+            ];
+        },
+        reportDetailsColumns() {
+            return [
+                { prop: 'quantity', label: 'Quantity', minWidth: '100px' },
+                { prop: 'validTo', label: 'Valid to', minWidth: '150px', align: 'right' }
+            ];
+        },
+        searchDetailsData() {
+            const planBalance = this.subscriptionInfo.plan?.search_balance || 0;
+            const extraBalance = this.subscriptionInfo.totalSearchPointBalance - planBalance;
+            return [
+                { quantity: planBalance.toLocaleString(), validTo: this.formatDate(this.subscriptionInfo.plan?.end_day) },
+                { quantity: extraBalance.toLocaleString(), validTo: '-' }
+            ];
+        },
+        searchDetailsColumns() {
+            return [
+                { prop: 'quantity', label: 'Quantity', minWidth: '100px' },
+                { prop: 'validTo', label: 'Valid to', minWidth: '150px', align: 'right' }
+            ];
         }
     },
     mounted() {
@@ -240,7 +254,7 @@ export default {
         },
         formatDate(date) {
             if(!date) return '-';
-            return this.$dayjs(date).format('MM/DD/YYYY HH:mm:ss');  
+            return this.$dayjs(date).format('MM/DD/YYYY HH:mm:ss');
         },
         formatDate2(date) {
             if(!date) return '-';
@@ -274,7 +288,7 @@ export default {
                     loading.close();
                 })
             })
-            
+
         },
         toPay() {
             if(this.userInfo.user_role != 0) {
@@ -311,7 +325,7 @@ export default {
             } else {
                 return null;
             }
-            
+
         },
         getPlanPrice(plan) {
             if(!plan) return '-';
@@ -330,7 +344,7 @@ export default {
             else {
                 this.$router.push('/subscribe');
             }
-            
+
         }
     }
 }
@@ -349,7 +363,7 @@ $wallet-primary-disabled: lighten($--color-primary, 35%);
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
-    background-color: #f5f7fa;
+    // background-color: #f5f7fa;
     // min-height: 100vh;
     display: grid;
     grid-template-columns: 1fr 2fr;
@@ -472,9 +486,9 @@ $wallet-primary-disabled: lighten($--color-primary, 35%);
 }
 
 .balance-number {
-    font-size: 36px;
-    font-weight: 700;
-    color: #333333;
+    font-size: 24px;
+    font-weight: 400;
+    color: #007855;
     margin-bottom: 20px;
 }
 
@@ -531,6 +545,8 @@ $wallet-primary-disabled: lighten($--color-primary, 35%);
     font-size: 14px;
     color: $wallet-primary;
     cursor: pointer;
+    margin-bottom: 16px;
+    display: inline-block;
 
     &:hover {
         color: $wallet-primary-hover;

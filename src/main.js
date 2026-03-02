@@ -14,6 +14,9 @@ Vue.use(ElementUI, {
 
 import "./utils/utils.js";
 
+import BasicButton from "./components/newui-202603/BasicButton.vue";
+Vue.component("BasicButton", BasicButton);
+
 const dayjs = require("dayjs");
 Vue.prototype.$dayjs = dayjs;
 

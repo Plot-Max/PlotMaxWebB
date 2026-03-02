@@ -19,23 +19,22 @@
 
       <!-- Search Section -->
       <div class="search-section">
-        <el-autocomplete
+        <SearchInput
           v-model="searchQuery"
+          placeholder="Search Address"
           :fetch-suggestions="querySearchAsync"
           :debounce="500"
-          placeholder="Search Address"
-          class="search-input"
-          prefix-icon="el-icon-search"
           @input="selectedAddress = null"
           @select="handleSelect"
-        ></el-autocomplete>
+          size="large"
+        />
       </div>
 
       <!-- Action Buttons -->
       <div class="action-section">
         <el-button
           type="primary"
-          size="medium"
+          size="large"
           class="custom-button primary"
           @click="
             $router.push({ path: '/choose-service', query: selectedAddress })
@@ -47,7 +46,7 @@
         <el-button
           class="custom-button info"
           type="info"
-          size="medium"
+          size="large"
           @click="toSearchPage"
         >
           Advanced Search
@@ -137,12 +136,14 @@
 <script>
 import { searchAddress } from "@/apis";
 import EditUserInfo from "./EditUserInfo.vue";
+import SearchInput from "./newui-202603/SearchInput.vue";
 import MapStateMixins from "@/views/mixins/MapStateMixins";
 export default {
   name: "Header",
   mixins: [MapStateMixins],
   components: {
     EditUserInfo,
+    SearchInput,
   },
   data() {
     return {
@@ -262,10 +263,6 @@ export default {
     flex: 1;
     max-width: 300px;
     margin: 0 20px;
-
-    .search-input {
-      width: 100%;
-    }
   }
 
   .action-section {

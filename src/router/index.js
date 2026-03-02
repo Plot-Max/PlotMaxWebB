@@ -20,16 +20,19 @@ const routes = [
         path: '/account',
         name: 'Account',
         component: () => import('../views/account/index.vue'),
+        // 已调色
       },
       {
         path: '/point-not-enough',
         name: 'PointNotEnough',
         component: () => import('../views/result/pointNotEnough.vue'),
+        // 已调色
       },
       {
         path: '/report',
         name: 'Report',
         component: () => import('../views/report/index.vue'),
+        // 已调色
       },
       // {
       //   path: '/search/v2',
@@ -53,21 +56,25 @@ const routes = [
         path: '/search/result',
         name: 'SearchResult',
         component: () => import('../views/search/result.vue'),
+        // 已调色
       },
       {
         path: '/subscribe',
         name: 'Subscribe',
         component: () => import('../views/subscribe/index.vue'),
+        // 已调色
       },
       {
         path: '/wallet',
         name: 'Wallet',
         component: () => import('../views/wallet/index.vue'),
+        // 已调色
       },
       {
         path: '/pay-success',
         name: 'PaySuccess',
         component: () => import('../views/result/paySuccess.vue'),
+        // 已调色
       },
       {
         path: '/pay-pack-success',
